@@ -1,4 +1,4 @@
-package com.udit.algovisualizer.ui.theme
+package com.udit.algovisualizer.ui.sorting.bubble_sort.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

@@ -1,4 +1,4 @@
-package com.udit.algovisualizer.ui.theme
+package com.udit.algovisualizer.ui.sorting.bubble_sort.ui.theme
 
 import android.app.Activity
 import android.os.Build

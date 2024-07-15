@@ -1,4 +1,4 @@
-package com.udit.algovisualizer.ui.theme
+package com.udit.algovisualizer.ui.home.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
