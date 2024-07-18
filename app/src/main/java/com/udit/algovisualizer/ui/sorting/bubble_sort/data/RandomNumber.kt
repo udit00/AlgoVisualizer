@@ -5,7 +5,7 @@ import androidx.compose.ui.graphics.Color
 data class RandomNumber(
     val num: Int,
     val color: Color,
-    val sorted: Boolean
+    var sorted: Boolean
 ) {
     val id: Int get() = hashCode()
 
