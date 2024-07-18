@@ -4,16 +4,17 @@ import android.util.Log
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -32,14 +33,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import com.udit.algovisualizer.ui.sorting.bubble_sort.data.RandomNumber
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BubbleSortScreen(navController: NavController) {
+fun BubbleSortScreen(navController: NavController, viewModel: BubbleSortViewModel = viewModel()) {
 
     val TAG = "BubbleSortScreen"
 
@@ -68,16 +71,27 @@ fun BubbleSortScreen(navController: NavController) {
                             contentDescription = "Go Back To Home"
                         )
                     }
+                },
+                actions = {
+                    IconButton(
+                        onClick = {
+                            generateRandomNumbers(6)
+                        }) {
+                        Icon(
+                            imageVector = Icons.Default.Refresh,
+                            contentDescription = "Refresh"
+                        )
+                    }
                 }
             )
         }
     ) { innerPadding ->
-        numList(padding = innerPadding)
+        numList(padding = innerPadding, viewModel = viewModel)
     }
 }
 
 
-fun generateRandomNumbers(count: Int): List<Int> {
+fun generateRandomNumbers(count: Int): List<RandomNumber> {
     val list = generateSequence {
         Random.nextInt(1, 10)
     }
@@ -88,13 +102,20 @@ fun generateRandomNumbers(count: Int): List<Int> {
     list.forEachIndexed { index, i ->
         Log.d("RANDOM_NUMBERS",i.toString());
     }
-
-    return list
+    val randomNumbers: MutableList<RandomNumber> = mutableListOf()
+    for(items in list) {
+        val randomNumber = RandomNumber(
+            num = items,
+            color = Color.Magenta,
+            sorted = false
+        )
+        randomNumbers.add(randomNumber)
+    }
+    return randomNumbers
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun numList(padding: PaddingValues) {
+fun numList(padding: PaddingValues, viewModel: BubbleSortViewModel) {
     val coroutineScope = rememberCoroutineScope()
 
     val delayTime = remember {
@@ -102,16 +123,32 @@ fun numList(padding: PaddingValues) {
     }
 //    val list = generateRandomNumbers(6).toMutableList()
     var randomNumbers = remember {
-//        generateRandomNumbers(6).toMutableList()
+        mutableStateOf(generateRandomNumbers(6).toMutableList())
 //        mutableStateOf(listOf(1,2,3,4,5,6))
-        mutableStateOf(listOf(4,2,6,5,1,3))
+//        mutableStateOf(listOf(4,2,6,5,1,3))
 //        mutableStateListOf(mutableListOf(1,2,3,4,5,6))
     }
     val buttonName = remember {
         mutableStateOf("Shuffle")
     }
 
-    fun swapElement(arr: MutableList<Int>, leftIndex: Int, rightIndex: Int): MutableList<Int> {
+    val selectedCards = remember {
+        mutableStateOf(mutableListOf(0, 1))
+    }
+
+    val defaultCardColor = remember {
+        mutableStateOf(Color.Red)
+    }
+
+    val selectedCardColor = remember {
+        mutableStateOf(Color.White)
+    }
+
+    val sortedCardColors = remember {
+        mutableStateOf(Color.Magenta)
+    }
+
+    fun swapElement(arr: MutableList<RandomNumber>, leftIndex: Int, rightIndex: Int): MutableList<RandomNumber> {
         val temp = arr[leftIndex]
         arr[leftIndex] = arr[rightIndex]
         arr[rightIndex] = temp
@@ -122,14 +159,14 @@ fun numList(padding: PaddingValues) {
         for(i in randomNumbers.value.indices) {
             var leftPtr = 0
             var rightPtr = 1
-            var tempArr: MutableList<Int>
+            var tempArr: MutableList<RandomNumber>
             for(j in 0 until randomNumbers.value.size - i) {
                 tempArr = randomNumbers.value.toMutableList()
                 if(leftPtr >= tempArr.size || rightPtr >= tempArr.size) {
 //                               j = randomNumbers.value.size + i
                     break
                 }
-                if(tempArr[leftPtr] > tempArr[rightPtr]) {
+                if(tempArr[leftPtr].isGreater(tempArr[rightPtr])) {
                     tempArr = swapElement(tempArr, leftPtr, rightPtr)
 //                                randomNumbers.value = swapElement(tempArr, leftPtr, rightPtr)
                 }
@@ -143,30 +180,51 @@ fun numList(padding: PaddingValues) {
 //        delay(1000)
     }
 
+
     LazyColumn(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.Gray)
+            .padding(10.dp),
         verticalArrangement = Arrangement.spacedBy(15.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         contentPadding = padding
 //        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 100.dp)
     ) {
-        items(
+//            items(
+//                items = randomNumbers.value,
+//                key = { it.num },
+//            ) { randomNumber ->
+        itemsIndexed(
             items = randomNumbers.value,
-            key = { it },
-        ) {
+            key = {index, item -> item.id }
+        ) { index, randomNumber ->
             Card(
 
-                border = BorderStroke(2.dp, color = Color.Red),
+                border = BorderStroke(
+                    2.dp,
+                    color = when(index) {
+                        in selectedCards.value -> {
+                            selectedCardColor.value
+                        } else -> {
+                            defaultCardColor.value
+                        }
+
+                    }
+//                    color = Color.Red
+                ),
                 modifier = Modifier
-                    .animateItemPlacement(
-                        animationSpec = tween(delayTime.value.toInt())
+                    .animateItem(
+                        fadeInSpec = tween(100),
+                        fadeOutSpec = tween(100),
+                        placementSpec = tween(delayTime.value.toInt())
                     )
 
 //                .padding(150.dp)
 //                .background(color = Color.Red)
             ) {
                 Text(
-                    text = it.toString(),
+                    text = randomNumber.num.toString(),
                     fontSize = 20.sp,
                     modifier = Modifier
                         .padding(30.dp)
@@ -180,16 +238,32 @@ fun numList(padding: PaddingValues) {
             Button(
                 onClick = {
                     coroutineScope.launch {
-                        bubbleSort()
+//                        bubbleSort()
+                        for(i in randomNumbers.value.indices) {
+                            var leftPtr = 0
+                            var rightPtr = 1
+                            var tempArr: MutableList<RandomNumber>
+                            for(j in 0 until randomNumbers.value.size - i) {
+                                selectedCards.value = mutableListOf(leftPtr, rightPtr)
+                                delay(200)
+                                tempArr = randomNumbers.value.toMutableList()
+                                if(leftPtr >= tempArr.size || rightPtr >= tempArr.size) {
+                                    break
+                                }
+                                if(tempArr[leftPtr].isGreater(tempArr[rightPtr])) {
+                                    tempArr = swapElement(tempArr, leftPtr, rightPtr)
+                                    randomNumbers.value = tempArr
+                                    delay(timeMillis = delayTime.value * 2)
+                                } else {
+                                    delay(timeMillis = delayTime.value / 2)
+                                }
+                                leftPtr++
+                                rightPtr++
+                            }
+                        }
                     }
-//                    val tempList = randomNumbers.value.toMutableList()
-//                    val temp = tempList[0]
-//                    tempList[0] = tempList[3]
-//                    tempList[3] = temp
-//                    randomNumbers.value = tempList
 
                     Log.d("RANDOM_NUM", randomNumbers.toString())
-//                    randomNumbers = randomNumbers.shuffled().toMutableList()
                     buttonName.value = "CHANGED"
                 }
             ) {
