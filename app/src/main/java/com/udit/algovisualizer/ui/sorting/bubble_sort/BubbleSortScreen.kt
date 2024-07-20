@@ -7,7 +7,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
@@ -27,6 +29,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -37,6 +40,10 @@ import androidx.navigation.NavController
 fun BubbleSortScreen(navController: NavController, viewModel: BubbleSortViewModel = viewModel()) {
 
     val TAG = "BubbleSortScreen"
+
+    val buttonName by viewModel.buttonName.collectAsState()
+    val isListSorted by viewModel.isListSorted.collectAsState()
+    val randomNumbers by viewModel.randomNumbers.collectAsState()
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -76,9 +83,27 @@ fun BubbleSortScreen(navController: NavController, viewModel: BubbleSortViewMode
 //                    }
 //                }
             )
+        },
+        bottomBar = {
+            Button(
+                modifier = Modifier.fillMaxWidth().padding(30.dp),
+                onClick = {
+                    if(isListSorted) {
+                        viewModel.regenerateList()
+                    } else {
+                        viewModel.sortList()
+                    }
+                    Log.d("RANDOM_NUM", randomNumbers.toString())
+                }) {
+                Text(
+                    fontSize = 20.sp,
+                    text = buttonName
+                )
+            }
         }
     ) { innerPadding ->
         numList(padding = innerPadding, viewModel = viewModel)
+
     }
 }
 
@@ -88,7 +113,7 @@ fun numList(padding: PaddingValues, viewModel: BubbleSortViewModel) {
     val delayTime by viewModel.delayTime.collectAsState()
     val randomNumbers by viewModel.randomNumbers.collectAsState()
     val selectedCards by viewModel.selectedCards.collectAsState()
-    val buttonName by viewModel.buttonName.collectAsState()
+//    val buttonName by viewModel.buttonName.collectAsState()
     val defaultCardColor by viewModel.defaultCardColor.collectAsState()
     val firstSelectedCardColor by viewModel.firstSelectedCardColor.collectAsState()
     val secondSelectedCardColor by viewModel.secondSelectedCardColor.collectAsState()
@@ -98,7 +123,8 @@ fun numList(padding: PaddingValues, viewModel: BubbleSortViewModel) {
         modifier = Modifier
             .fillMaxSize()
             .background(Color.Gray)
-            .padding(10.dp),
+            .padding(20.dp)
+        ,
         verticalArrangement = Arrangement.spacedBy(15.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         contentPadding = padding
@@ -139,6 +165,7 @@ fun numList(padding: PaddingValues, viewModel: BubbleSortViewModel) {
                         fadeOutSpec = tween(100),
                         placementSpec = tween(delayTime.toInt())
                     )
+//                    .width(randomNumber.num.dp)
 
 //                .padding(150.dp)
 //                .background(color = Color.Red)
@@ -147,26 +174,29 @@ fun numList(padding: PaddingValues, viewModel: BubbleSortViewModel) {
                     text = randomNumber.num.toString(),
                     fontSize = 20.sp,
                     modifier = Modifier
-                        .padding(30.dp)
+                        .padding(10.dp)
 
 
 //                    .background(color = Color.Red)
                 )
             }
         }
-        item {
-            Button(
-                onClick = {
-                    if(isListSorted) {
-                        viewModel.regenerateList()
-                    } else {
-                        viewModel.sortList()
-                    }
-                    Log.d("RANDOM_NUM", randomNumbers.toString())
-                }
-            ) {
-                Text(text = buttonName)
-            }
-        }
+//        item {
+//            Button(
+//                modifier = Modifier
+////                    .align(Alignment.CenterHorizontally),
+//                    .fillMaxSize(),
+//                onClick = {
+//                    if(isListSorted) {
+//                        viewModel.regenerateList()
+//                    } else {
+//                        viewModel.sortList()
+//                    }
+//                    Log.d("RANDOM_NUM", randomNumbers.toString())
+//                }
+//            ) {
+//                Text(text = buttonName)
+//            }
+//        }
     }
 }

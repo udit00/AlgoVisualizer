@@ -28,14 +28,14 @@ class BubbleSortViewModel(
         private val isListSortedTag = "isListSortedTag"
     }
 
-    val delayTime = savedStateHandle.getStateFlow("delayTime", 100.toLong())
+    val delayTime = savedStateHandle.getStateFlow("delayTime", 10.toLong())
     val buttonName = savedStateHandle.getStateFlow(buttonNameTag, buttonNameBubbleSortString)
     val defaultCardColor = savedStateHandle.getStateFlow(defaultCardColorTag, Color.Red)
     val firstSelectedCardColor = savedStateHandle.getStateFlow(firstSelectedCardColorTag, Color.Yellow)
     val secondSelectedCardColor = savedStateHandle.getStateFlow(secondSelectedCardColorTag, Color.White)
     val sortedCardColors = savedStateHandle.getStateFlow(sortedCardColorsTag, Color.Green)
     val selectedCards = savedStateHandle.getStateFlow(selectedCardsTag, listOf(0, 1))
-    val randomNumbers = savedStateHandle.getStateFlow(randomNumberListTag, generateRandomNumbers(6).toMutableList())
+    val randomNumbers = savedStateHandle.getStateFlow(randomNumberListTag, generateRandomNumbers(10).toMutableList())
     val isListSorted = savedStateHandle.getStateFlow(isListSortedTag, false)
 //    var randomNumbers = mutableStateOf(
 //        savedStateHandle.get<List<RandomNumber>>(randomNumberListTag) ?: generateRandomNumbers(6)
@@ -43,7 +43,7 @@ class BubbleSortViewModel(
 
     fun regenerateList() {
         savedStateHandle[isListSortedTag] = false
-        val tempList = generateRandomNumbers(6).toMutableList()
+        val tempList = generateRandomNumbers(10).toMutableList()
         savedStateHandle[randomNumberListTag] = tempList
         savedStateHandle[buttonNameTag] = buttonNameBubbleSortString
 //        randomNumbers.value = tempList
@@ -116,10 +116,10 @@ class BubbleSortViewModel(
 
     private fun generateRandomNumbers(count: Int): List<RandomNumber> {
         val list = generateSequence {
-            Random.nextInt(1, 10)
+            Random.nextInt(1, count * 10)
         }
             .distinct()
-            .take(6)
+            .take(count)
             .toSet()
             .toList()
 
