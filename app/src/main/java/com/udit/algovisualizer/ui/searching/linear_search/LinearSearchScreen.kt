@@ -1,4 +1,4 @@
-package com.udit.algovisualizer.ui.sorting.bubble_sort
+package com.udit.algovisualizer.ui.searching.linear_search
 
 import android.util.Log
 import androidx.compose.animation.core.tween
@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
@@ -29,17 +28,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BubbleSortScreen(navController: NavController, viewModel: BubbleSortViewModel = viewModel()) {
-
-    val TAG = "BubbleSortScreen"
+fun LinearSearchScreen(navController: NavController, viewModel: LinearSearchViewModel = viewModel()) {
 
     val buttonName by viewModel.buttonName.collectAsState()
     val isListSorted by viewModel.isListSorted.collectAsState()
@@ -86,12 +82,14 @@ fun BubbleSortScreen(navController: NavController, viewModel: BubbleSortViewMode
         },
         bottomBar = {
             Button(
-                modifier = Modifier.fillMaxWidth().padding(30.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(30.dp),
                 onClick = {
                     if(isListSorted) {
                         viewModel.regenerateList()
                     } else {
-                        viewModel.sortList()
+                        viewModel.searchList(10)
                     }
                     Log.d("RANDOM_NUM", randomNumbers.toString())
                 }) {
@@ -107,8 +105,9 @@ fun BubbleSortScreen(navController: NavController, viewModel: BubbleSortViewMode
     }
 }
 
+
 @Composable
-private fun numList(padding: PaddingValues, viewModel: BubbleSortViewModel) {
+private fun numList(padding: PaddingValues, viewModel: LinearSearchViewModel) {
 
     val delayTime by viewModel.delayTime.collectAsState()
     val randomNumbers by viewModel.randomNumbers.collectAsState()

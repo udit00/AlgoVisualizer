@@ -13,6 +13,7 @@ import com.udit.algovisualizer.ui.home.HomeScreen
 import com.udit.algovisualizer.ui.main_activity.data.Screen
 import com.udit.algovisualizer.ui.main_activity.ui.theme.AlgoVisualizerTheme
 import com.udit.algovisualizer.ui.searching.binary_search.BinarySearchScreen
+import com.udit.algovisualizer.ui.searching.linear_search.LinearSearchScreen
 import com.udit.algovisualizer.ui.sorting.bubble_sort.BubbleSortScreen
 
 class MainActivity : ComponentActivity() {
@@ -44,6 +45,9 @@ fun MainScreen() {
         composable<Screen.BinarySearchScreen> {
 //            val args = it.toRoute<Screen.BinarySearchScreen>()
             BinarySearchScreen(navController)
+        }
+        composable<Screen.LinearSearchScreen> {
+            LinearSearchScreen(navController)
         }
     }
 
