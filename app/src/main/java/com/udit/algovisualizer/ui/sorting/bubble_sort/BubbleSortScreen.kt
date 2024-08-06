@@ -5,7 +5,9 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -86,7 +88,9 @@ fun BubbleSortScreen(navController: NavController, viewModel: BubbleSortViewMode
         },
         bottomBar = {
             Button(
-                modifier = Modifier.fillMaxWidth().padding(30.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(30.dp),
                 onClick = {
                     if(isListSorted) {
                         viewModel.regenerateList()
@@ -119,68 +123,76 @@ private fun numList(padding: PaddingValues, viewModel: BubbleSortViewModel) {
     val secondSelectedCardColor by viewModel.secondSelectedCardColor.collectAsState()
     val sortedCardColors by viewModel.sortedCardColors.collectAsState()
     val isListSorted by viewModel.isListSorted.collectAsState()
-    LazyColumn(
+    Row(
         modifier = Modifier
             .fillMaxSize()
             .background(Color.Gray)
-            .padding(20.dp)
-        ,
-        verticalArrangement = Arrangement.spacedBy(15.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        contentPadding = padding
-//        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 100.dp)
     ) {
+        Column(
+            modifier = Modifier
+                .weight(0.5F)
+                .fillMaxSize()
+        ) {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(20.dp),
+                verticalArrangement = Arrangement.spacedBy(15.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                contentPadding = padding
+//        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 100.dp)
+            ) {
 //            items(
 //                items = randomNumbers.value,
 //                key = { it.num },
 //            ) { randomNumber ->
-        itemsIndexed(
-            items = randomNumbers,
-            key = {index, item -> item.id }
-        ) { index, randomNumber ->
-            Card(
+                itemsIndexed(
+                    items = randomNumbers,
+                    key = { index, item -> item.id }
+                ) { index, randomNumber ->
+                    Card(
 
-                border = BorderStroke(
-                    2.dp,
-                    color = if(isListSorted) {
-                        sortedCardColors
-                    } else {
-                        when (index) {
-                            in selectedCards -> {
-                                if (index % 2 == 0) firstSelectedCardColor
-                                else secondSelectedCardColor
-                            }
+                        border = BorderStroke(
+                            2.dp,
+                            color = if (isListSorted) {
+                                sortedCardColors
+                            } else {
+                                when (index) {
+                                    in selectedCards -> {
+                                        if (index % 2 == 0) firstSelectedCardColor
+                                        else secondSelectedCardColor
+                                    }
 
-                            else -> {
-                                if (randomNumber.sorted) sortedCardColors
-                                else defaultCardColor
+                                    else -> {
+                                        if (randomNumber.sorted) sortedCardColors
+                                        else defaultCardColor
+                                    }
+                                }
                             }
-                        }
-                    }
 //                    color = Color.Red
-                ),
-                modifier = Modifier
-                    .animateItem(
-                        fadeInSpec = tween(100),
-                        fadeOutSpec = tween(100),
-                        placementSpec = tween(delayTime.toInt())
-                    )
+                        ),
+                        modifier = Modifier
+                            .animateItem(
+                                fadeInSpec = tween(100),
+                                fadeOutSpec = tween(100),
+                                placementSpec = tween(delayTime.toInt())
+                            )
 //                    .width(randomNumber.num.dp)
 
 //                .padding(150.dp)
 //                .background(color = Color.Red)
-            ) {
-                Text(
-                    text = randomNumber.num.toString(),
-                    fontSize = 20.sp,
-                    modifier = Modifier
-                        .padding(10.dp)
+                    ) {
+                        Text(
+                            text = randomNumber.num.toString(),
+                            fontSize = 20.sp,
+                            modifier = Modifier
+                                .padding(10.dp)
 
 
 //                    .background(color = Color.Red)
-                )
-            }
-        }
+                        )
+                    }
+                }
 //        item {
 //            Button(
 //                modifier = Modifier
@@ -198,5 +210,29 @@ private fun numList(padding: PaddingValues, viewModel: BubbleSortViewModel) {
 //                Text(text = buttonName)
 //            }
 //        }
+            }
+        }
+        Column(
+            modifier = Modifier
+                .weight(0.5F)
+                .padding(padding)
+                .fillMaxSize()
+        ) {
+            Button(onClick = {
+                viewModel.changeDelayTime(100)
+            }) {
+                Text(text = "0.25x")
+            }
+            Button(onClick = {
+                viewModel.changeDelayTime(550)
+            }) {
+                Text(text = "0.5x")
+            }
+            Button(onClick = {
+                viewModel.changeDelayTime(1500)
+            }) {
+                Text(text = "1.0x")
+            }
+        }
     }
 }
