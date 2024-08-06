@@ -15,6 +15,7 @@ class BubbleSortViewModel(
 ): ViewModel() {
 
     companion object {
+        val TAG = "BubbleSortViewModel"
         val randomNumberListTag = "randomNumberListTag"
         val selectedCardsTag = "selectedCardsTag"
         val buttonNameTag = "buttonNameTag"
@@ -22,13 +23,15 @@ class BubbleSortViewModel(
         val firstSelectedCardColorTag = "firstSelectedCardColorTag"
         val secondSelectedCardColorTag = "secondSelectedCardColorTag"
         val sortedCardColorsTag = "sortedCardColorsTag"
+        val delayTimeTag = "delayTimeTag"
+        val isSortingTag = "isSortingTag"
 
         private val buttonNameBubbleSortString = "Bubble Sort"
         private val buttonNameReShuffleString = "Re-Shuffle"
         private val isListSortedTag = "isListSortedTag"
     }
 
-    val delayTime = savedStateHandle.getStateFlow("delayTime", 10.toLong())
+    val delayTime = savedStateHandle.getStateFlow(delayTimeTag, 100.toLong())
     val buttonName = savedStateHandle.getStateFlow(buttonNameTag, buttonNameBubbleSortString)
     val defaultCardColor = savedStateHandle.getStateFlow(defaultCardColorTag, Color.Red)
     val firstSelectedCardColor = savedStateHandle.getStateFlow(firstSelectedCardColorTag, Color.Yellow)
@@ -37,6 +40,7 @@ class BubbleSortViewModel(
     val selectedCards = savedStateHandle.getStateFlow(selectedCardsTag, listOf(0, 1))
     val randomNumbers = savedStateHandle.getStateFlow(randomNumberListTag, generateRandomNumbers(10).toMutableList())
     val isListSorted = savedStateHandle.getStateFlow(isListSortedTag, false)
+    val isSorting = savedStateHandle.getStateFlow(isSortingTag, false)
 //    var randomNumbers = mutableStateOf(
 //        savedStateHandle.get<List<RandomNumber>>(randomNumberListTag) ?: generateRandomNumbers(6)
 //    )
@@ -49,8 +53,17 @@ class BubbleSortViewModel(
 //        randomNumbers.value = tempList
     }
 
+    fun changeDelayTime(num: Int) {
+        if(!isSorting.value) {
+            Log.d(TAG, "LIST IS SORTING")
+            return;
+        }
+        savedStateHandle[delayTimeTag] = num.toLong()
+    }
+
     private fun listSorted() {
         savedStateHandle[isListSortedTag] = true
+        savedStateHandle[isSortingTag] = false
         savedStateHandle[buttonNameTag] = buttonNameReShuffleString
         var tempArr = randomNumbers.value
         tempArr.forEachIndexed { index, randomNumber ->
@@ -69,6 +82,7 @@ class BubbleSortViewModel(
 
 
     private suspend fun bubbleSort() {
+        savedStateHandle[isSortingTag] = true
         for(i in randomNumbers.value.indices) {
             var leftPtr = 0
             var rightPtr = 1
@@ -91,9 +105,9 @@ class BubbleSortViewModel(
                 if(j == randomNumbers.value.size - i - 1) {
                     tempArr[randomNumbers.value.size - i - 1].sorted = true
                 }
-                tempArr.forEachIndexed { index, randomNumber ->
-                    Log.d("Sorting Random Numbers", randomNumber.toString())
-                }
+//                tempArr.forEachIndexed { index, randomNumber ->
+//                    Log.d("Sorting Random Numbers", randomNumber.toString())
+//                }
                 savedStateHandle[randomNumberListTag] = tempArr
                 if(swapHappened) {
                     delay(timeMillis = delayTime.value * 2)
