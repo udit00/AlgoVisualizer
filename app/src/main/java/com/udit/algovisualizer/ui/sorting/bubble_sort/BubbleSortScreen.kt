@@ -175,7 +175,7 @@ private fun numList(padding: PaddingValues, viewModel: BubbleSortViewModel) {
                             .animateItem(
                                 fadeInSpec = tween(100),
                                 fadeOutSpec = tween(100),
-                                placementSpec = tween(delayTime.speed.toInt())
+                                placementSpec = tween(delayTime.toInt())
                             )
 //                    .width(randomNumber.num.dp)
 
@@ -216,7 +216,9 @@ private fun numList(padding: PaddingValues, viewModel: BubbleSortViewModel) {
             modifier = Modifier
                 .weight(0.5F)
                 .padding(padding)
-                .fillMaxSize()
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceAround
         ) {
             Button(onClick = {
                 viewModel.changeDelayTime(BubbleSortViewModel.Companion.SPEED.SLOWEST)

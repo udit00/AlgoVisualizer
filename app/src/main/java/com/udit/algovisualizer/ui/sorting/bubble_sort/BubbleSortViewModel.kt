@@ -44,7 +44,7 @@ class BubbleSortViewModel(
         private val isListSortedTag = "isListSortedTag"
     }
 
-    val delayTime = savedStateHandle.getStateFlow(delayTimeTag, SPEED.MODERATE)
+    val delayTime = savedStateHandle.getStateFlow(delayTimeTag, SPEED.MODERATE.speed)
     val buttonName = savedStateHandle.getStateFlow(buttonNameTag, buttonNameBubbleSortString)
     val defaultCardColor = savedStateHandle.getStateFlow(defaultCardColorTag, Color.Red)
     val firstSelectedCardColor = savedStateHandle.getStateFlow(firstSelectedCardColorTag, Color.Yellow)
@@ -66,12 +66,12 @@ class BubbleSortViewModel(
 //        randomNumbers.value = tempList
     }
 
-    fun changeDelayTime(speed: SPEED) {
+    fun changeDelayTime(runningSpeed: SPEED) {
         if(isSorting.value) {
             Log.d(TAG, "LIST IS SORTING so cannot change DelayTime")
             return;
         }
-        savedStateHandle[delayTimeTag] = speed
+        savedStateHandle[delayTimeTag] = runningSpeed.speed
         Log.d(TAG, "delayTime is ${delayTime.value}")
 
     }
@@ -107,7 +107,7 @@ class BubbleSortViewModel(
             for(j in 0 until randomNumbers.value.size - i) {
                 savedStateHandle[selectedCardsTag] = listOf(leftPtr, rightPtr)
                 savedStateHandle[selectedCardsTag] = listOf(leftPtr, rightPtr)
-                delay(delayTime.value.speed / 5)
+                delay(delayTime.value / 5)
                 tempArr = randomNumbers.value.toMutableList()
                 if(leftPtr >= tempArr.size || rightPtr >= tempArr.size) {
                     tempArr[tempArr.size - 1].sorted = true
@@ -126,9 +126,9 @@ class BubbleSortViewModel(
 //                }
                 savedStateHandle[randomNumberListTag] = tempArr
                 if(swapHappened) {
-                    delay(timeMillis = delayTime.value.speed * 2)
+                    delay(timeMillis = delayTime.value * 2)
                 } else {
-                    delay(timeMillis = delayTime.value.speed / 2)
+                    delay(timeMillis = delayTime.value / 2)
                 }
                 leftPtr++
                 rightPtr++
