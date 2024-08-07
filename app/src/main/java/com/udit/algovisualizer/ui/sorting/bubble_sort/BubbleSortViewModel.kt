@@ -15,6 +15,19 @@ class BubbleSortViewModel(
 ): ViewModel() {
 
     companion object {
+
+//        object SPEED {
+//            val SLOWEST = 100L
+//            val MODERATE = 550L
+//            val FASTEST = 750L
+//        }
+
+        sealed class SPEED(val speed: Long) {
+            object SLOWEST: SPEED(750L)
+            object MODERATE: SPEED(550L)
+            object FASTEST: SPEED(100L)
+        }
+
         val TAG = "BubbleSortViewModel"
         val randomNumberListTag = "randomNumberListTag"
         val selectedCardsTag = "selectedCardsTag"
@@ -31,7 +44,7 @@ class BubbleSortViewModel(
         private val isListSortedTag = "isListSortedTag"
     }
 
-    val delayTime = savedStateHandle.getStateFlow(delayTimeTag, 100.toLong())
+    val delayTime = savedStateHandle.getStateFlow(delayTimeTag, SPEED.MODERATE)
     val buttonName = savedStateHandle.getStateFlow(buttonNameTag, buttonNameBubbleSortString)
     val defaultCardColor = savedStateHandle.getStateFlow(defaultCardColorTag, Color.Red)
     val firstSelectedCardColor = savedStateHandle.getStateFlow(firstSelectedCardColorTag, Color.Yellow)
@@ -53,12 +66,14 @@ class BubbleSortViewModel(
 //        randomNumbers.value = tempList
     }
 
-    fun changeDelayTime(num: Int) {
-        if(!isSorting.value) {
-            Log.d(TAG, "LIST IS SORTING")
+    fun changeDelayTime(speed: SPEED) {
+        if(isSorting.value) {
+            Log.d(TAG, "LIST IS SORTING so cannot change DelayTime")
             return;
         }
-        savedStateHandle[delayTimeTag] = num.toLong()
+        savedStateHandle[delayTimeTag] = speed
+        Log.d(TAG, "delayTime is ${delayTime.value}")
+
     }
 
     private fun listSorted() {
@@ -82,6 +97,7 @@ class BubbleSortViewModel(
 
 
     private suspend fun bubbleSort() {
+        Log.d(TAG, delayTime.value.toString())
         savedStateHandle[isSortingTag] = true
         for(i in randomNumbers.value.indices) {
             var leftPtr = 0
@@ -91,7 +107,7 @@ class BubbleSortViewModel(
             for(j in 0 until randomNumbers.value.size - i) {
                 savedStateHandle[selectedCardsTag] = listOf(leftPtr, rightPtr)
                 savedStateHandle[selectedCardsTag] = listOf(leftPtr, rightPtr)
-                delay(delayTime.value / 5)
+                delay(delayTime.value.speed / 5)
                 tempArr = randomNumbers.value.toMutableList()
                 if(leftPtr >= tempArr.size || rightPtr >= tempArr.size) {
                     tempArr[tempArr.size - 1].sorted = true
@@ -110,9 +126,9 @@ class BubbleSortViewModel(
 //                }
                 savedStateHandle[randomNumberListTag] = tempArr
                 if(swapHappened) {
-                    delay(timeMillis = delayTime.value * 2)
+                    delay(timeMillis = delayTime.value.speed * 2)
                 } else {
-                    delay(timeMillis = delayTime.value / 2)
+                    delay(timeMillis = delayTime.value.speed / 2)
                 }
                 leftPtr++
                 rightPtr++
