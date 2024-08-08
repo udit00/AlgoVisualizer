@@ -4,15 +4,20 @@ import android.util.Log
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -106,8 +111,74 @@ fun BubbleSortScreen(navController: NavController, viewModel: BubbleSortViewMode
             }
         }
     ) { innerPadding ->
-        numList(padding = innerPadding, viewModel = viewModel)
+//        numList(padding = innerPadding, viewModel = viewModel)
+        newNumList(padding = innerPadding, viewModel = viewModel)
 
+    }
+}
+
+@Composable
+private fun newNumList(padding: PaddingValues, viewModel: BubbleSortViewModel) {
+    val delayTime by viewModel.delayTime.collectAsState()
+    val randomNumbers by viewModel.randomNumbers.collectAsState()
+    val selectedCards by viewModel.selectedCards.collectAsState()
+//    val buttonName by viewModel.buttonName.collectAsState()
+    val defaultCardColor by viewModel.defaultCardColor.collectAsState()
+    val firstSelectedCardColor by viewModel.firstSelectedCardColor.collectAsState()
+    val secondSelectedCardColor by viewModel.secondSelectedCardColor.collectAsState()
+    val sortedCardColors by viewModel.sortedCardColors.collectAsState()
+    val isListSorted by viewModel.isListSorted.collectAsState()
+    Row(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(padding)
+    ) {
+        LazyRow(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(20.dp),
+//            verticalArrangement = Arrangement.spacedBy(15.dp),
+//            horizontalAlignment = Alignment.CenterHorizontally,
+            horizontalArrangement = Arrangement.spacedBy(15.dp),
+            contentPadding = padding
+        ) {
+            itemsIndexed(
+                items = randomNumbers,
+                key = { index, item -> item.id }
+            ) { index, randomNumber ->
+                Box(
+
+                    modifier = Modifier
+                        .height((randomNumber.num * 5).dp)
+                        .width(15.dp)
+                        .background(Color.Gray)
+                        .animateItem(
+                            fadeInSpec = tween(100),
+                            fadeOutSpec = tween(100),
+                            placementSpec = tween(delayTime.toInt())
+                        )
+                        .border( border = BorderStroke(
+                            2.dp,
+                            color = if (isListSorted) {
+                                sortedCardColors
+                            } else {
+                                when (index) {
+                                    in selectedCards -> {
+                                        if (index % 2 == 0) firstSelectedCardColor
+                                        else secondSelectedCardColor
+                                    }
+
+                                    else -> {
+                                        if (randomNumber.sorted) sortedCardColors
+                                        else defaultCardColor
+                                    }
+                                }
+                            }
+//                    color = Color.Red
+                        ),)
+                )
+            }
+        }
     }
 }
 
@@ -220,9 +291,11 @@ private fun numList(padding: PaddingValues, viewModel: BubbleSortViewModel) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceAround
         ) {
-            Button(onClick = {
-                viewModel.changeDelayTime(BubbleSortViewModel.Companion.SPEED.SLOWEST)
-            }) {
+            Button(
+                onClick = {
+                    viewModel.changeDelayTime(BubbleSortViewModel.Companion.SPEED.SLOWEST)
+                },
+            ) {
                 Text(text = "0.25x")
             }
             Button(onClick = {

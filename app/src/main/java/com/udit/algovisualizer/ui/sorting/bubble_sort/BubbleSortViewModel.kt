@@ -146,7 +146,7 @@ class BubbleSortViewModel(
 
     private fun generateRandomNumbers(count: Int): List<RandomNumberSorting> {
         val list = generateSequence {
-            Random.nextInt(1, count * 10)
+            Random.nextInt(10, count * 10)
         }
             .distinct()
             .take(count)
