@@ -1,4 +1,5 @@
 <resources>
+    <string name="installed_app_name">Algo Visualizer</string>
     <string name="app_name">AlgoVisualizer</string>
     <string name="title_activity_bubble_sort">BubbleSortActivity</string>
     <string name="title_activity_home">HomeActivity</string>
