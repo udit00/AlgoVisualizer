@@ -204,7 +204,6 @@ fun BubbleSortScreen(navController: NavController, viewModel: BubbleSortViewMode
 //                }
             )
         },
-//        snackbarHost = ,
         bottomBar = {
             Button(
                 modifier = Modifier
@@ -230,7 +229,6 @@ fun BubbleSortScreen(navController: NavController, viewModel: BubbleSortViewMode
             BubbleSortViewModel.Companion.SettingsView.LINES -> lineView(padding = innerPadding, viewModel = viewModel)
         }
         if(openSettings) {
-//            openSettingsAlert(viewModel = viewModel)
 //            if(isSorting) {
 //
 //            } else {

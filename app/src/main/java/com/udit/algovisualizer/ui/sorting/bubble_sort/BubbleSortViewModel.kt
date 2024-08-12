@@ -81,7 +81,7 @@ class BubbleSortViewModel(
     val secondSelectedCardColor = savedStateHandle.getStateFlow(secondSelectedCardColorTag, Color.White)
     val sortedCardColors = savedStateHandle.getStateFlow(sortedCardColorsTag, Color.Green)
     val selectedCards = savedStateHandle.getStateFlow(selectedCardsTag, listOf(0, 1))
-    val randomNumbers = savedStateHandle.getStateFlow(randomNumberListTag, generateRandomNumbers(20, 100, 200).toMutableList())
+    val randomNumbers = savedStateHandle.getStateFlow(randomNumberListTag, generateRandomNumbers(30, 100, 200).toMutableList())
     val isListSorted = savedStateHandle.getStateFlow(isListSortedTag, false)
     val isSorting = savedStateHandle.getStateFlow(isSortingTag, false)
 
