@@ -1,7 +1,6 @@
 package com.udit.algovisualizer.ui.sorting.bubble_sort
 
 import android.util.Log
-import androidx.compose.foundation.ScrollState
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -14,10 +13,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.getAndUpdate
-import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
@@ -33,17 +28,27 @@ class BubbleSortViewModel(
 //            val FASTEST = 750L
 //        }
 
-        sealed class SPEED(val speed: Long) {
-            object SLOWEST: SPEED(750L)
-            object MODERATE: SPEED(550L)
-            object FASTEST: SPEED(100L)
+//        @Serializable
+//        sealed class SettingsSpeed(val displayName: String, val speed: Long) {
+//            @Serializable
+//            data object SLOWEST: SettingsSpeed("0.25x", 750L)
+//            @Serializable
+//            data object MODERATE: SettingsSpeed("0.5x",550L)
+//            @Serializable
+//            data object FASTEST: SettingsSpeed("1.0x",100L)
+//        }
+
+        sealed class SettingsSpeed(val displayName: String, val speed: Long) {
+            data object SLOWEST: SettingsSpeed("0.25x", 750L)
+            data object MODERATE: SettingsSpeed("0.5x",550L)
+            data object FASTEST: SettingsSpeed("1.0x",100L)
         }
 
-        enum class SettingsSpeed(val btnName: String) {
-            POINT_TWO_FIVE("0.25x"),
-            POINT_FIVE("0.5x"),
-            ONE("1.0x")
-        }
+//        enum class SettingsSpeed(val btnName: String, val speed: Long) {
+//            POINT_TWO_FIVE("0.25x", 750L),
+//            POINT_FIVE("0.5x", 550L),
+//            ONE("1.0x", 100L)
+//        }
 
         enum class SettingsView {
             CARD,
@@ -58,7 +63,7 @@ class BubbleSortViewModel(
         val firstSelectedCardColorTag = "firstSelectedCardColorTag"
         val secondSelectedCardColorTag = "secondSelectedCardColorTag"
         val sortedCardColorsTag = "sortedCardColorsTag"
-        val delayTimeTag = "delayTimeTag"
+//        val delayTimeTag = "delayTimeTag"
         val isSortingTag = "isSortingTag"
         val showSettingsTag = "showSettingsTag"
         val selectedSettingsSpeedTag = "selectedSettingsSpeedTag"
@@ -74,7 +79,7 @@ class BubbleSortViewModel(
     }
 
     var sortingCoroutine: Job? = null
-    val delayTime = savedStateHandle.getStateFlow(delayTimeTag, SPEED.FASTEST.speed)
+//    val delayTime = savedStateHandle.getStateFlow(delayTimeTag, SettingsSpeed.FASTEST.speed)
     val buttonName = savedStateHandle.getStateFlow(buttonNameTag, buttonNameBubbleSortString)
     val defaultCardColor = savedStateHandle.getStateFlow(defaultCardColorTag, Color.Red)
     val firstSelectedCardColor = savedStateHandle.getStateFlow(firstSelectedCardColorTag, Color.Yellow)
@@ -92,7 +97,8 @@ class BubbleSortViewModel(
     val notifyUserFlow: LiveData<String> = _notifyUser
 
     val openSettingsFlow = savedStateHandle.getStateFlow(showSettingsTag, false)
-    val selectedSettingSpeed = savedStateHandle.getStateFlow(selectedSettingsSpeedTag, SettingsSpeed.POINT_FIVE)
+//    val selectedSettingSpeed: StateFlow<SettingsSpeed> = savedStateHandle.getStateFlow(selectedSettingsSpeedTag, SettingsSpeed.FASTEST)
+    var selectedSettingSpeed: MutableStateFlow<SettingsSpeed> = MutableStateFlow(SettingsSpeed.FASTEST)
     val selectedSettingsView = savedStateHandle.getStateFlow(selectedSettingsViewTag, SettingsView.LINES)
     val notSelectedSettingColor = savedStateHandle.getStateFlow(notSelectedSettingColorTag, listOf(Color.DarkGray, Color.Gray))
     val selectedSettingColor = savedStateHandle.getStateFlow(selectedSettingColorTag, listOf(Color.Magenta, Color.Red))
@@ -137,13 +143,13 @@ class BubbleSortViewModel(
 //        randomNumbers.value = tempList
     }
 
-    fun changeDelayTime(runningSpeed: SPEED, selectedSpeed: SettingsSpeed) {
+    fun changeDelayTime(selectedSpeed: SettingsSpeed) {
 //        if(isSorting.value) {
 //            Log.d(TAG, "LIST IS SORTING so cannot change DelayTime")
 //            return;
 //        }
-        savedStateHandle[delayTimeTag] = runningSpeed.speed
-        savedStateHandle[selectedSettingsSpeedTag] = selectedSpeed
+//        savedStateHandle[delayTimeTag] = runningSpeed.speed
+        selectedSettingSpeed.value = selectedSpeed
     }
 
     fun changeSettingView(selectedView: SettingsView) {
@@ -185,7 +191,8 @@ class BubbleSortViewModel(
             for(j in 0 until randomNumbers.value.size - i) {
                 savedStateHandle[selectedCardsTag] = listOf(leftPtr, rightPtr)
                 savedStateHandle[selectedCardsTag] = listOf(leftPtr, rightPtr)
-                delay(delayTime.value / 5)
+                delay(selectedSettingSpeed.value.speed / 5)
+//                delay(selectedSettingSpeed.value.speed / 5)
                 tempArr = randomNumbers.value.toMutableList()
                 if(leftPtr >= tempArr.size || rightPtr >= tempArr.size) {
                     tempArr[tempArr.size - 1].sorted = true
@@ -201,9 +208,9 @@ class BubbleSortViewModel(
                 }
                 savedStateHandle[randomNumberListTag] = tempArr
                 if(swapHappened) {
-                    delay(timeMillis = delayTime.value * 2)
+                    delay(timeMillis = selectedSettingSpeed.value.speed * 2)
                 } else {
-                    delay(timeMillis = delayTime.value / 2)
+                    delay(timeMillis = selectedSettingSpeed.value.speed / 2)
                 }
                 leftPtr++
                 rightPtr++

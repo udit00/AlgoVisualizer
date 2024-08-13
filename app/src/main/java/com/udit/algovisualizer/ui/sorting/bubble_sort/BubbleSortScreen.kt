@@ -61,8 +61,10 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.udit.algovisualizer.ui.MyApp
+import com.udit.algovisualizer.ui.ScreenDimensions
 import com.udit.algovisualizer.ui.main_activity.data.Screen
 import kotlinx.coroutines.flow.FlowCollector
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -86,6 +88,8 @@ fun BubbleSortScreen(navController: NavController, viewModel: BubbleSortViewMode
     val scope = rememberCoroutineScope()
     val snackBarHostState = remember { SnackbarHostState() }
     val lifeCycleOwner = LocalLifecycleOwner.current
+
+    val screenDimensions: ScreenDimensions = MyApp.getScreenDimensions()
 
 
 //    val notifyUserFlow = remember {
@@ -210,12 +214,16 @@ fun BubbleSortScreen(navController: NavController, viewModel: BubbleSortViewMode
                     .fillMaxWidth()
                     .padding(30.dp),
                 onClick = {
+//                    debugLog("ScreenDimensions WIDTH: ${screenDimensions.width}")
+//                    debugLog("ScreenDimensions HEIGHT: ${screenDimensions.height}")
+//                    debugLog("ScreenDimensions DP - WIDTH: ${screenDimensions.dpWidth}")
+//                    debugLog("ScreenDimensions DP - HEIGHT: ${screenDimensions.dpHeight}")
                     if(isListSorted) {
                         viewModel.regenerateList()
                     } else {
                         viewModel.sortList()
                     }
-                    Log.d("RANDOM_NUM", randomNumbers.toString())
+//                    Log.d("RANDOM_NUM", randomNumbers.toString())
                 }) {
                 Text(
                     fontSize = 20.sp,
@@ -319,84 +327,71 @@ private fun openSettingsBottomSheet(viewModel: BubbleSortViewModel) {
                     Text(
                         text = "Speed",
                         fontSize = TextUnit(value = 23f, type = TextUnitType.Sp),
-                        modifier = Modifier.padding(10.dp).fillMaxWidth()
+                        modifier = Modifier
+                            .padding(10.dp)
+                            .fillMaxWidth()
                     )
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
+                        val slowestSpeed = BubbleSortViewModel.Companion.SettingsSpeed.SLOWEST
+                        val moderateSpeed = BubbleSortViewModel.Companion.SettingsSpeed.MODERATE
+                        val fastestSpeed = BubbleSortViewModel.Companion.SettingsSpeed.FASTEST
                         GradientButton(
-                            text = BubbleSortViewModel.Companion.SettingsSpeed.POINT_TWO_FIVE.btnName,
+                            text = slowestSpeed.displayName,
                             textColor = Color.White,
                             borderColor = Color.Black,
-                            gradientColors = if(selectedSpeed == BubbleSortViewModel.Companion.SettingsSpeed.POINT_TWO_FIVE) {
+                            gradientColors = if(selectedSpeed == slowestSpeed) {
                                 selectedSettingsColor
                             } else {
                                 notSelectedSettingsColor
                             },
                             onClick = {
                                 viewModel.changeDelayTime(
-                                    runningSpeed = BubbleSortViewModel.Companion.SPEED.SLOWEST,
-                                    selectedSpeed = BubbleSortViewModel.Companion.SettingsSpeed.POINT_TWO_FIVE
+                                    selectedSpeed = slowestSpeed
                                 )
                             }
                         )
                         GradientButton(
-                            text = BubbleSortViewModel.Companion.SettingsSpeed.POINT_FIVE.btnName,
+                            text = moderateSpeed.displayName,
                             textColor = Color.White,
                             borderColor = Color.Black,
-                            gradientColors = if(selectedSpeed == BubbleSortViewModel.Companion.SettingsSpeed.POINT_FIVE) {
+                            gradientColors = if(selectedSpeed == moderateSpeed) {
                                 selectedSettingsColor
                             } else {
                                 notSelectedSettingsColor
                             },
                             onClick = {
                                 viewModel.changeDelayTime(
-                                    runningSpeed = BubbleSortViewModel.Companion.SPEED.MODERATE,
-                                    selectedSpeed = BubbleSortViewModel.Companion.SettingsSpeed.POINT_FIVE
+                                    selectedSpeed = moderateSpeed
                                 )
                             }
                         )
                         GradientButton(
-                            text = BubbleSortViewModel.Companion.SettingsSpeed.ONE.btnName,
+                            text = fastestSpeed.displayName,
                             textColor = Color.White,
                             borderColor = Color.Black,
-                            gradientColors = if(selectedSpeed == BubbleSortViewModel.Companion.SettingsSpeed.ONE) {
+                            gradientColors = if(selectedSpeed == fastestSpeed) {
                                 selectedSettingsColor
                             } else {
                                 notSelectedSettingsColor
                             },
                             onClick = {
                                 viewModel.changeDelayTime(
-                                    runningSpeed = BubbleSortViewModel.Companion.SPEED.FASTEST,
-                                    selectedSpeed = BubbleSortViewModel.Companion.SettingsSpeed.ONE
+                                    selectedSpeed = fastestSpeed
                                 )
                             }
                         )
-//                        Button(
-//                            onClick = {
-//                                viewModel.changeDelayTime(BubbleSortViewModel.Companion.SPEED.SLOWEST)
-//                            },
-//                        ) {
-//                            Text(text = "0.25x")
-//                        }
-//                        Button(onClick = {
-//                            viewModel.changeDelayTime(BubbleSortViewModel.Companion.SPEED.MODERATE)
-//                        }) {
-//                            Text(text = "0.5x")
-//                        }
-//                        Button(onClick = {
-//                            viewModel.changeDelayTime(BubbleSortViewModel.Companion.SPEED.FASTEST)
-//                        }) {
-//                            Text(text = "1.0x")
-//                        }
                     }
                 }
                 Column {
                     Text(
                         text = "View",
                         fontSize = TextUnit(value = 23f, type = TextUnitType.Sp),
-                        modifier = Modifier.padding(10.dp).fillMaxWidth()
+                        modifier = Modifier
+                            .padding(10.dp)
+                            .fillMaxWidth()
                     )
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -437,7 +432,8 @@ private fun openSettingsBottomSheet(viewModel: BubbleSortViewModel) {
 
 @Composable
 private fun lineView(padding: PaddingValues, viewModel: BubbleSortViewModel) {
-    val delayTime by viewModel.delayTime.collectAsState()
+//    val delayTime by viewModel.delayTime.collectAsState()
+
     val randomNumbers by viewModel.randomNumbers.collectAsState()
     val selectedCards by viewModel.selectedCards.collectAsState()
 //    val buttonName by viewModel.buttonName.collectAsState()
@@ -446,6 +442,8 @@ private fun lineView(padding: PaddingValues, viewModel: BubbleSortViewModel) {
     val secondSelectedCardColor by viewModel.secondSelectedCardColor.collectAsState()
     val sortedCardColors by viewModel.sortedCardColors.collectAsState()
     val isListSorted by viewModel.isListSorted.collectAsState()
+    val selectedSettingsSpeed by viewModel.selectedSettingSpeed.collectAsState()
+
     Row(
         modifier = Modifier
             .fillMaxSize()
@@ -458,6 +456,7 @@ private fun lineView(padding: PaddingValues, viewModel: BubbleSortViewModel) {
 //            verticalArrangement = Arrangement.spacedBy(15.dp),
 //            horizontalAlignment = Alignment.CenterHorizontally,
             horizontalArrangement = Arrangement.spacedBy(5.dp),
+//            userScrollEnabled = false
 //            contentPadding = padding
         ) {
             itemsIndexed(
@@ -473,7 +472,7 @@ private fun lineView(padding: PaddingValues, viewModel: BubbleSortViewModel) {
                         .animateItem(
                             fadeInSpec = tween(100),
                             fadeOutSpec = tween(100),
-                            placementSpec = tween(delayTime.toInt())
+                            placementSpec = tween(selectedSettingsSpeed.speed.toInt())
                         )
                         .border(
                             border = BorderStroke(
@@ -505,7 +504,7 @@ private fun lineView(padding: PaddingValues, viewModel: BubbleSortViewModel) {
 @Composable
 private fun cardView(padding: PaddingValues, viewModel: BubbleSortViewModel) {
 
-    val delayTime by viewModel.delayTime.collectAsState()
+//    val delayTime by viewModel.delayTime.collectAsState()
     val randomNumbers by viewModel.randomNumbers.collectAsState()
     val selectedCards by viewModel.selectedCards.collectAsState()
 //    val buttonName by viewModel.buttonName.collectAsState()
@@ -572,7 +571,7 @@ private fun cardView(padding: PaddingValues, viewModel: BubbleSortViewModel) {
                             .animateItem(
                                 fadeInSpec = tween(100),
                                 fadeOutSpec = tween(100),
-                                placementSpec = tween(delayTime.toInt())
+                                placementSpec = tween(selectedSpeed.speed.toInt())
                             )
 //                    .width(randomNumber.num.dp)
 
@@ -617,51 +616,51 @@ private fun cardView(padding: PaddingValues, viewModel: BubbleSortViewModel) {
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceAround
         ) {
+            val slowestSpeed = BubbleSortViewModel.Companion.SettingsSpeed.SLOWEST
+            val moderateSpeed = BubbleSortViewModel.Companion.SettingsSpeed.MODERATE
+            val fastestSpeed = BubbleSortViewModel.Companion.SettingsSpeed.FASTEST
             GradientButton(
-                text = BubbleSortViewModel.Companion.SettingsSpeed.POINT_TWO_FIVE.btnName,
+                text = slowestSpeed.displayName,
                 textColor = Color.White,
                 borderColor = Color.Black,
-                gradientColors = if(selectedSpeed == BubbleSortViewModel.Companion.SettingsSpeed.POINT_TWO_FIVE) {
+                gradientColors = if(selectedSpeed == slowestSpeed) {
                     selectedSettingsColor
                 } else {
                     notSelectedSettingsColor
                 },
                 onClick = {
                     viewModel.changeDelayTime(
-                        runningSpeed = BubbleSortViewModel.Companion.SPEED.SLOWEST,
-                        selectedSpeed = BubbleSortViewModel.Companion.SettingsSpeed.POINT_TWO_FIVE
+                        selectedSpeed = slowestSpeed
                     )
                 }
             )
             GradientButton(
-                text = BubbleSortViewModel.Companion.SettingsSpeed.POINT_FIVE.btnName,
+                text = moderateSpeed.displayName,
                 textColor = Color.White,
                 borderColor = Color.Black,
-                gradientColors = if(selectedSpeed == BubbleSortViewModel.Companion.SettingsSpeed.POINT_FIVE) {
+                gradientColors = if(selectedSpeed == moderateSpeed) {
                     selectedSettingsColor
                 } else {
                     notSelectedSettingsColor
                 },
                 onClick = {
                     viewModel.changeDelayTime(
-                        runningSpeed = BubbleSortViewModel.Companion.SPEED.MODERATE,
-                        selectedSpeed = BubbleSortViewModel.Companion.SettingsSpeed.POINT_FIVE
+                        selectedSpeed = moderateSpeed
                     )
                 }
             )
             GradientButton(
-                text = BubbleSortViewModel.Companion.SettingsSpeed.ONE.btnName,
+                text = fastestSpeed.displayName,
                 textColor = Color.White,
                 borderColor = Color.Black,
-                gradientColors = if(selectedSpeed == BubbleSortViewModel.Companion.SettingsSpeed.ONE) {
+                gradientColors = if(selectedSpeed == fastestSpeed) {
                     selectedSettingsColor
                 } else {
                     notSelectedSettingsColor
                 },
                 onClick = {
                     viewModel.changeDelayTime(
-                        runningSpeed = BubbleSortViewModel.Companion.SPEED.FASTEST,
-                        selectedSpeed = BubbleSortViewModel.Companion.SettingsSpeed.ONE
+                        selectedSpeed = fastestSpeed
                     )
                 }
             )
