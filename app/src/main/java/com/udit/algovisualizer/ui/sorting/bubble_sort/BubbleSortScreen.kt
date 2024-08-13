@@ -51,6 +51,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
@@ -89,7 +90,6 @@ fun BubbleSortScreen(navController: NavController, viewModel: BubbleSortViewMode
     val snackBarHostState = remember { SnackbarHostState() }
     val lifeCycleOwner = LocalLifecycleOwner.current
 
-    val screenDimensions: ScreenDimensions = MyApp.getScreenDimensions()
 
 
 //    val notifyUserFlow = remember {
@@ -214,10 +214,7 @@ fun BubbleSortScreen(navController: NavController, viewModel: BubbleSortViewMode
                     .fillMaxWidth()
                     .padding(30.dp),
                 onClick = {
-//                    debugLog("ScreenDimensions WIDTH: ${screenDimensions.width}")
-//                    debugLog("ScreenDimensions HEIGHT: ${screenDimensions.height}")
-//                    debugLog("ScreenDimensions DP - WIDTH: ${screenDimensions.dpWidth}")
-//                    debugLog("ScreenDimensions DP - HEIGHT: ${screenDimensions.dpHeight}")
+//                    viewModel.logScreenDimensions()
                     if(isListSorted) {
                         viewModel.regenerateList()
                     } else {
@@ -443,6 +440,8 @@ private fun lineView(padding: PaddingValues, viewModel: BubbleSortViewModel) {
     val sortedCardColors by viewModel.sortedCardColors.collectAsState()
     val isListSorted by viewModel.isListSorted.collectAsState()
     val selectedSettingsSpeed by viewModel.selectedSettingSpeed.collectAsState()
+    val distanceBetweenItems = viewModel.uiDistanceBetweenItems.collectAsState()
+    val lineWidth = viewModel.uiLineWidth.collectAsState()
 
     Row(
         modifier = Modifier
@@ -455,7 +454,7 @@ private fun lineView(padding: PaddingValues, viewModel: BubbleSortViewModel) {
                 .padding(10.dp),
 //            verticalArrangement = Arrangement.spacedBy(15.dp),
 //            horizontalAlignment = Alignment.CenterHorizontally,
-            horizontalArrangement = Arrangement.spacedBy(5.dp),
+            horizontalArrangement = Arrangement.spacedBy(Dp(distanceBetweenItems.value)),
 //            userScrollEnabled = false
 //            contentPadding = padding
         ) {
@@ -467,7 +466,7 @@ private fun lineView(padding: PaddingValues, viewModel: BubbleSortViewModel) {
 
                     modifier = Modifier
                         .height((randomNumber.num * 3).dp)
-                        .width(15.dp)
+                        .width(Dp(lineWidth.value))
                         .background(Color.Gray)
                         .animateItem(
                             fadeInSpec = tween(100),

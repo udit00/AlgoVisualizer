@@ -2,18 +2,24 @@ package com.udit.algovisualizer.ui.sorting.bubble_sort
 
 import android.util.Log
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import androidx.core.math.MathUtils
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.udit.algovisualizer.ui.MyApp
+import com.udit.algovisualizer.ui.ScreenDimensions
 import com.udit.algovisualizer.ui.sorting.commonSortingData.RandomNumberSorting
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlin.math.floor
 import kotlin.random.Random
 
 class BubbleSortViewModel(
@@ -79,6 +85,8 @@ class BubbleSortViewModel(
     }
 
     var sortingCoroutine: Job? = null
+
+    val screenDimensions: ScreenDimensions = MyApp.getScreenDimensions()
 //    val delayTime = savedStateHandle.getStateFlow(delayTimeTag, SettingsSpeed.FASTEST.speed)
     val buttonName = savedStateHandle.getStateFlow(buttonNameTag, buttonNameBubbleSortString)
     val defaultCardColor = savedStateHandle.getStateFlow(defaultCardColorTag, Color.Red)
@@ -86,7 +94,12 @@ class BubbleSortViewModel(
     val secondSelectedCardColor = savedStateHandle.getStateFlow(secondSelectedCardColorTag, Color.White)
     val sortedCardColors = savedStateHandle.getStateFlow(sortedCardColorsTag, Color.Green)
     val selectedCards = savedStateHandle.getStateFlow(selectedCardsTag, listOf(0, 1))
-    val randomNumbers = savedStateHandle.getStateFlow(randomNumberListTag, generateRandomNumbers(30, 100, 200).toMutableList())
+
+    val uiDistanceBetweenItems: StateFlow<Float> = MutableStateFlow(5f)
+    val uiLineWidth: StateFlow<Float> = MutableStateFlow(15f)
+    val generateRandomNumbersCount: MutableStateFlow<Int> = MutableStateFlow(calculateRandomNumberCount())
+
+    val randomNumbers = savedStateHandle.getStateFlow(randomNumberListTag, generateRandomNumbers(generateRandomNumbersCount.value, 100, 200).toMutableList())
     val isListSorted = savedStateHandle.getStateFlow(isListSortedTag, false)
     val isSorting = savedStateHandle.getStateFlow(isSortingTag, false)
 
@@ -105,6 +118,23 @@ class BubbleSortViewModel(
 //    var randomNumbers = mutableStateOf(
 //        savedStateHandle.get<List<RandomNumber>>(randomNumberListTag) ?: generateRandomNumbers(6)
 //    )
+
+    fun logScreenDimensions() {
+        debugLog("ScreenDimensions WIDTH: ${screenDimensions.width}")
+        debugLog("ScreenDimensions HEIGHT: ${screenDimensions.height}")
+        debugLog("ScreenDimensions DP - WIDTH: ${screenDimensions.dpWidth}")
+        debugLog("ScreenDimensions DP - HEIGHT: ${screenDimensions.dpHeight}")
+    }
+
+    fun calculateRandomNumberCount(): Int {
+        debugLog("CALCULATING DIMENSION")
+        logScreenDimensions()
+        val width = floor(screenDimensions.dpWidth.toDouble())
+        val dividend = uiDistanceBetweenItems.value + uiLineWidth.value
+        val count: Int = (width / dividend).toInt()
+        debugLog("CALCULATING DIMENSION $count")
+        return count
+    }
 
     fun debugLog(msg: String) {
         Log.d(TAG, msg)
