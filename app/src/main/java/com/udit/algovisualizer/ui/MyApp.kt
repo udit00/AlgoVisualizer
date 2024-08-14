@@ -3,6 +3,7 @@ package com.udit.algovisualizer.ui
 import android.app.Application
 import android.content.Context
 import android.util.DisplayMetrics
+import android.util.Log
 import android.widget.Toast
 
 class MyApp: Application() {
@@ -27,6 +28,10 @@ class MyApp: Application() {
                 screenDimensions.dpWidth = displayMetrics!!.widthPixels / displayMetrics!!.density
             }
             return screenDimensions
+        }
+
+        fun debugLog(tag: String, msg: String) {
+            Log.d(tag, msg)
         }
     }
 

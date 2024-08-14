@@ -102,7 +102,8 @@ fun HomeScreen(navController: NavController) {
                                 navController.navigate(Screen.LinearSearchScreen)
                             }
                             ButtonType.Sorting -> {
-                                navController.navigate(Screen.BubbleSortScreen)
+//                                navController.navigate(Screen.BubbleSortScreen)
+                                navController.navigate(Screen.SortingOptions)
                             }
                             else -> {
                                 Log.e(TAG, "ENUM NOT SET AT ANY OBJECT", )

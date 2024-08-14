@@ -15,6 +15,7 @@ import com.udit.algovisualizer.ui.main_activity.ui.theme.AlgoVisualizerTheme
 import com.udit.algovisualizer.ui.searching.binary_search.BinarySearchScreen
 import com.udit.algovisualizer.ui.searching.linear_search.LinearSearchScreen
 import com.udit.algovisualizer.ui.sorting.bubble_sort.BubbleSortScreen
+import com.udit.algovisualizer.ui.sorting.sorting_options.SortingOptionsScreen
 
 class MainActivity : ComponentActivity() {
 
@@ -36,18 +37,21 @@ fun MainScreen() {
     NavHost(navController = navController, startDestination = Screen.HomeScreen) {
         composable<Screen.HomeScreen> {
 //            val args = it.toRoute<Screen.HomeScreen>()
-            HomeScreen(navController)
+            HomeScreen(navController = navController)
+        }
+        composable<Screen.SortingOptions> {
+            SortingOptionsScreen(navController = navController)
         }
         composable<Screen.BubbleSortScreen> {
 //            val args = it.toRoute<Screen.BubbleSortScreen>()
-            BubbleSortScreen(navController)
+            BubbleSortScreen(navController = navController)
         }
         composable<Screen.BinarySearchScreen> {
 //            val args = it.toRoute<Screen.BinarySearchScreen>()
-            BinarySearchScreen(navController)
+            BinarySearchScreen(navController = navController)
         }
         composable<Screen.LinearSearchScreen> {
-            LinearSearchScreen(navController)
+            LinearSearchScreen(navController = navController)
         }
     }
 

@@ -9,6 +9,7 @@ sealed class Screen(val route: String) {
 //    @Serializable data class BinarySearchScreen(@Contextual val navController: NavController): Screen(NavigationRoutes.binarySearchScreen)
 //    @Serializable data class BubbleSortScreen(@Contextual val navController: NavController): Screen(NavigationRoutes.bubbleSortScreen)
     @Serializable object HomeScreen: Screen(NavigationRoutes.homeScreenRoute)
+    @Serializable object SortingOptions: Screen(NavigationRoutes.sortingOptions)
     @Serializable object BinarySearchScreen: Screen(NavigationRoutes.binarySearchScreen)
     @Serializable object LinearSearchScreen: Screen(NavigationRoutes.binarySearchScreen)
     @Serializable object BubbleSortScreen: Screen(NavigationRoutes.bubbleSortScreen)
