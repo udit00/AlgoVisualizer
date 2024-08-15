@@ -13,4 +13,6 @@ sealed class Screen(val route: String) {
     @Serializable object BinarySearchScreen: Screen(NavigationRoutes.binarySearchScreen)
     @Serializable object LinearSearchScreen: Screen(NavigationRoutes.binarySearchScreen)
     @Serializable object BubbleSortScreen: Screen(NavigationRoutes.bubbleSortScreen)
+    @Serializable object InsertionSortScreen: Screen(NavigationRoutes.insertionSortScreen)
+    @Serializable object SelectionSortScreen: Screen(NavigationRoutes.selectionSortScreen)
 }

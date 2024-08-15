@@ -44,8 +44,8 @@ fun SortingOptionsScreen(navController: NavController) {
 //    val arrayOfSortingAlgorithms: List<String> = listOf("Bubble Sort", "Insertion Sort", "Selection Sort")
     val arrayOfSortingAlgorithms: List<SortingOptions> = listOf(
         SortingOptions(name = "Bubble Sort", screen = Screen.BubbleSortScreen, color = Color.Red),
-        SortingOptions(name = "Insertion Sort", screen = Screen.BubbleSortScreen, color = Color.Gray),
-        SortingOptions(name = "Selection Sort", screen = Screen.BubbleSortScreen, color = Color.Green)
+        SortingOptions(name = "Insertion Sort", screen = Screen.InsertionSortScreen, color = Color.Gray),
+        SortingOptions(name = "Selection Sort", screen = Screen.SelectionSortScreen, color = Color.Green)
     )
             
     Scaffold(
