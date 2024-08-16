@@ -29,6 +29,8 @@ import com.udit.algovisualizer.R
 import com.udit.algovisualizer.ui.home.data.ButtonType
 import com.udit.algovisualizer.ui.home.data.MenuButton
 import com.udit.algovisualizer.ui.main_activity.data.Screen
+import com.udit.algovisualizer.ui.sorting.commonSortingData.RandomNumberSorting
+import kotlin.math.log
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -102,8 +104,8 @@ fun HomeScreen(navController: NavController) {
                                 navController.navigate(Screen.LinearSearchScreen)
                             }
                             ButtonType.Sorting -> {
-//                                navController.navigate(Screen.BubbleSortScreen)
-                                navController.navigate(Screen.SortingOptions)
+//                                navController.navigate(Screen.SortingOptions)
+                                adjustArray(4,8)
                             }
                             else -> {
                                 Log.e(TAG, "ENUM NOT SET AT ANY OBJECT", )
@@ -145,4 +147,39 @@ fun HomeScreen(navController: NavController) {
             }
         }
     }
+}
+
+private fun debugLog(str: String) {
+    Log.d("DEBUG_LOG_HOME_SCREEN", str)
+}
+
+private fun logArr(randomNumbers: MutableList<RandomNumberSorting>) {
+    val tempArr: MutableList<Int> = mutableListOf()
+    randomNumbers.forEachIndexed { index, randomNumberSorting ->
+        tempArr.add(randomNumberSorting.num)
+    }
+    debugLog(tempArr.toString())
+}
+
+private fun generateArr(count: Int): MutableList<RandomNumberSorting> {
+    val tempArr: MutableList<RandomNumberSorting> = mutableListOf()
+    for(i in 0 until count) {
+        tempArr.add(RandomNumberSorting(num = i, color = Color.Red, sorted = false))
+    }
+    return tempArr
+}
+
+private fun adjustArray(fromPtr: Int, toPtr: Int): MutableList<RandomNumberSorting> {
+//    var tempArr = randomNumbers.value
+    var tempArr = generateArr(10)
+    logArr(tempArr)
+    val randomNumber: RandomNumberSorting = tempArr[toPtr]
+    for(i in toPtr - 1 downTo fromPtr) {
+        val tempVar = tempArr[i]
+        tempArr[i] = tempArr[i+1]
+        tempArr[i+1] = tempVar
+    }
+    tempArr[fromPtr] = randomNumber
+    logArr(tempArr)
+    return tempArr
 }

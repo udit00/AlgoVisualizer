@@ -256,16 +256,25 @@ class InsertionSortViewModel(
 
             for(j in i downTo 0) {
                 if(randomNumbers.value[j].num < randomNumbers.value[i].num && j != 1) {
-                    val temp = randomNumbers.value[i];
-                    randomNumbers.value[i] = randomNumbers.value[j+1]
-                    randomNumbers.value[j+1] = temp;
+//                    val temp = randomNumbers.value[i];
+//                    randomNumbers.value[i] = randomNumbers.value[j+1]
+//                    randomNumbers.value[j+1] = temp;
                 }
             }
         }
         logArr()
 //        debugLog(arr.toString())
+    }
 
-
+    private fun adjustArray(fromPtr: Int, toPtr: Int): MutableList<RandomNumberSorting> {
+        var tempArr = randomNumbers.value
+        val randomNumber: RandomNumberSorting = tempArr[toPtr]
+        for(i in fromPtr until toPtr) {
+            val tempVar = tempArr[i]
+            tempArr[i] = tempArr[i+1]
+            tempArr[i+1] = tempVar
+        }
+        return tempArr
     }
 
     private fun logArr() {
