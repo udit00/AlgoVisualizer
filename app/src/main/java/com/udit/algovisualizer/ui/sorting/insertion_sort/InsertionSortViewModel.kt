@@ -248,28 +248,54 @@ class InsertionSortViewModel(
 //        listSorted()
 //    }
 
-    fun insertionSortTest() {
-        var arr = randomNumbers.value
-//        logArr()
-        MyApp.logRandomNumber_Sorting(TAG, arr)
-//        for(i in randomNumbers.value.indices) {
-        for(i in 1 until arr.size) {
-            if(arr[i-1].isGreater(arr[i])) {
+    private suspend fun insertionSortTest() {
+        savedStateHandle[isSortingTag] = true
+//        savedStateHandle[sorted]
+//        var arr = randomNumbers.value
+
+        randomNumbers.value[0].sorted = true
+        savedStateHandle[randomNumberListTag] = randomNumbers.value
+        for(i in 1 until randomNumbers.value.size) {
+            if(randomNumbers.value[i-1].isGreater(randomNumbers.value[i])) {
+                savedStateHandle[selectedCardsTag] = listOf(i - 1, i)
                 for(j in i - 1 downTo  0) {
-//                    if(arr[i].isGreater(arr[j])) {
-                    if(arr[j].num < arr[i].num) {
-                        arr = adjustArray(j+1, i, arr)
+                    if(randomNumbers.value[j].num < randomNumbers.value[i].num) {
+//                        val fromPtr = j + 1
+//                        val toPtr = i
+//                       // randomNumbers.value = adjustArray(j+1, i, arr)
+//                        val randomNumber: RandomNumberSorting = randomNumbers.value[toPtr]
+//                        for(i in toPtr - 1 downTo fromPtr) {
+//                            val tempVar = randomNumbers.value[i]
+//                            randomNumbers.value[i] = randomNumbers.value[i+1]
+//                            randomNumbers.value[i+1] = tempVar
+//                        }
+//                        randomNumbers.value[fromPtr] = randomNumber
+                        savedStateHandle[randomNumberListTag] = adjustArray(j+1, i, randomNumbers.value)
+                        delay(timeMillis = selectedSettingSpeed.value.speed * 2)
                         break;
                     }
                 }
-                if(arr[i-1].isGreater(arr[i])) {
-                    arr = adjustArray(0, i, arr)
+                if(randomNumbers.value[i-1].isGreater(randomNumbers.value[i])) {
+//                    arr = adjustArray(0, i, arr)
+//                    val fromPtr = 0
+//                    val toPtr = i
+////                        randomNumbers.value = adjustArray(j+1, i, arr)
+//                    val randomNumber: RandomNumberSorting = randomNumbers.value[toPtr]
+//                    for(i in toPtr - 1 downTo fromPtr) {
+//                        val tempVar = randomNumbers.value[i]
+//                        randomNumbers.value[i] = randomNumbers.value[i+1]
+//                        randomNumbers.value[i+1] = tempVar
+//                    }
+//                    randomNumbers.value[fromPtr] = randomNumber
+                    savedStateHandle[randomNumberListTag] = adjustArray(0, i, randomNumbers.value)
+                    delay(timeMillis = selectedSettingSpeed.value.speed * 2)
                 }
             }
-        }
+            randomNumbers.value[i].sorted = true
+//            savedStateHandle[randomNumberListTag] = randomNumbers.value
 
-        MyApp.logRandomNumber_Sorting(TAG, arr)
-//        debugLog(arr.toString())
+        }
+        listSorted()
     }
 
     private fun adjustArray(fromPtr: Int, toPtr: Int, arr: MutableList<RandomNumberSorting>): MutableList<RandomNumberSorting> {
@@ -304,7 +330,7 @@ class InsertionSortViewModel(
             var swapHappened = false
             for(j in 0 until randomNumbers.value.size - i) {
                 savedStateHandle[selectedCardsTag] = listOf(leftPtr, rightPtr)
-                savedStateHandle[selectedCardsTag] = listOf(leftPtr, rightPtr)
+//                savedStateHandle[selectedCardsTag] = listOf(leftPtr, rightPtr)
                 delay(selectedSettingSpeed.value.speed / 5)
 //                delay(selectedSettingSpeed.value.speed / 5)
                 tempArr = randomNumbers.value.toMutableList()
