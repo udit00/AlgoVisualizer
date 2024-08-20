@@ -250,30 +250,40 @@ class InsertionSortViewModel(
 
     fun insertionSortTest() {
         var arr = randomNumbers.value
-        logArr()
-        for(i in randomNumbers.value.indices) {
-            if(i == 0) continue
-
-            for(j in i downTo 0) {
-                if(randomNumbers.value[j].num < randomNumbers.value[i].num && j != 1) {
-//                    val temp = randomNumbers.value[i];
-//                    randomNumbers.value[i] = randomNumbers.value[j+1]
-//                    randomNumbers.value[j+1] = temp;
+//        logArr()
+        MyApp.logRandomNumber_Sorting(TAG, arr)
+//        for(i in randomNumbers.value.indices) {
+        for(i in 1 until arr.size) {
+            if(arr[i-1].isGreater(arr[i])) {
+                for(j in i - 1 downTo  0) {
+//                    if(arr[i].isGreater(arr[j])) {
+                    if(arr[j].num < arr[i].num) {
+                        arr = adjustArray(j+1, i, arr)
+                        break;
+                    }
+                }
+                if(arr[i-1].isGreater(arr[i])) {
+                    arr = adjustArray(0, i, arr)
                 }
             }
         }
-        logArr()
+
+        MyApp.logRandomNumber_Sorting(TAG, arr)
 //        debugLog(arr.toString())
     }
 
-    private fun adjustArray(fromPtr: Int, toPtr: Int): MutableList<RandomNumberSorting> {
-        var tempArr = randomNumbers.value
+    private fun adjustArray(fromPtr: Int, toPtr: Int, arr: MutableList<RandomNumberSorting>): MutableList<RandomNumberSorting> {
+//        var tempArr = randomNumbers.value
+        var tempArr = arr
+//        MyApp.logRandomNumber_Sorting(TAG ,tempArr)
         val randomNumber: RandomNumberSorting = tempArr[toPtr]
-        for(i in fromPtr until toPtr) {
+        for(i in toPtr - 1 downTo fromPtr) {
             val tempVar = tempArr[i]
             tempArr[i] = tempArr[i+1]
             tempArr[i+1] = tempVar
         }
+        tempArr[fromPtr] = randomNumber
+//        MyApp.logRandomNumber_Sorting(TAG ,tempArr)
         return tempArr
     }
 

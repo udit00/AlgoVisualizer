@@ -5,6 +5,7 @@ import android.content.Context
 import android.util.DisplayMetrics
 import android.util.Log
 import android.widget.Toast
+import com.udit.algovisualizer.ui.sorting.commonSortingData.RandomNumberSorting
 
 class MyApp: Application() {
 
@@ -33,6 +34,15 @@ class MyApp: Application() {
         fun debugLog(tag: String, msg: String) {
             Log.d(tag, msg)
         }
+
+        fun logRandomNumber_Sorting(tag: String, randomNumbers: MutableList<RandomNumberSorting>) {
+            val tempArr: MutableList<Int> = mutableListOf()
+            randomNumbers.forEachIndexed { index, randomNumberSorting ->
+                tempArr.add(randomNumberSorting.num)
+            }
+            debugLog(tag, tempArr.toString())
+        }
+
     }
 
 

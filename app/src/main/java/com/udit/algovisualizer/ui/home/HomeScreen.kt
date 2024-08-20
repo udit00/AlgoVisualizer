@@ -26,6 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.udit.algovisualizer.R
+import com.udit.algovisualizer.ui.MyApp
 import com.udit.algovisualizer.ui.home.data.ButtonType
 import com.udit.algovisualizer.ui.home.data.MenuButton
 import com.udit.algovisualizer.ui.main_activity.data.Screen
@@ -104,8 +105,8 @@ fun HomeScreen(navController: NavController) {
                                 navController.navigate(Screen.LinearSearchScreen)
                             }
                             ButtonType.Sorting -> {
-//                                navController.navigate(Screen.SortingOptions)
-                                adjustArray(4,8)
+                                navController.navigate(Screen.SortingOptions)
+//                                adjustArray(4,8)
                             }
                             else -> {
                                 Log.e(TAG, "ENUM NOT SET AT ANY OBJECT", )
@@ -153,13 +154,6 @@ private fun debugLog(str: String) {
     Log.d("DEBUG_LOG_HOME_SCREEN", str)
 }
 
-private fun logArr(randomNumbers: MutableList<RandomNumberSorting>) {
-    val tempArr: MutableList<Int> = mutableListOf()
-    randomNumbers.forEachIndexed { index, randomNumberSorting ->
-        tempArr.add(randomNumberSorting.num)
-    }
-    debugLog(tempArr.toString())
-}
 
 private fun generateArr(count: Int): MutableList<RandomNumberSorting> {
     val tempArr: MutableList<RandomNumberSorting> = mutableListOf()
@@ -172,7 +166,7 @@ private fun generateArr(count: Int): MutableList<RandomNumberSorting> {
 private fun adjustArray(fromPtr: Int, toPtr: Int): MutableList<RandomNumberSorting> {
 //    var tempArr = randomNumbers.value
     var tempArr = generateArr(10)
-    logArr(tempArr)
+    MyApp.logRandomNumber_Sorting("Home Screen" ,tempArr)
     val randomNumber: RandomNumberSorting = tempArr[toPtr]
     for(i in toPtr - 1 downTo fromPtr) {
         val tempVar = tempArr[i]
@@ -180,6 +174,6 @@ private fun adjustArray(fromPtr: Int, toPtr: Int): MutableList<RandomNumberSorti
         tempArr[i+1] = tempVar
     }
     tempArr[fromPtr] = randomNumber
-    logArr(tempArr)
+    MyApp.logRandomNumber_Sorting("Home Screen" ,tempArr)
     return tempArr
 }
