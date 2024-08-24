@@ -260,40 +260,49 @@ class InsertionSortViewModel(
                 savedStateHandle[selectedCardsTag] = listOf(i - 1, i)
                 for(j in i - 1 downTo  0) {
                     if(randomNumbers.value[j].num < randomNumbers.value[i].num) {
-//                        val fromPtr = j + 1
-//                        val toPtr = i
-//                       // randomNumbers.value = adjustArray(j+1, i, arr)
-//                        val randomNumber: RandomNumberSorting = randomNumbers.value[toPtr]
-//                        for(i in toPtr - 1 downTo fromPtr) {
-//                            val tempVar = randomNumbers.value[i]
-//                            randomNumbers.value[i] = randomNumbers.value[i+1]
-//                            randomNumbers.value[i+1] = tempVar
-//                        }
-//                        randomNumbers.value[fromPtr] = randomNumber
-                        savedStateHandle[randomNumberListTag] = adjustArray(j+1, i, randomNumbers.value)
+                        var tempArr = randomNumbers.value
+                        val fromPtr = j + 1
+                        val toPtr = i
+                        val randomNumber: RandomNumberSorting = tempArr[toPtr]
+                        for(i in toPtr - 1 downTo fromPtr) {
+                            val tempVar = tempArr[i]
+                            savedStateHandle[randomNumberListTag] = tempArr
+
+                            delay(timeMillis = selectedSettingSpeed.value.speed * 2)
+                            tempArr[i] = tempArr[i+1]
+                            savedStateHandle[randomNumberListTag] = tempArr
+                            tempArr[i+1] = tempVar
+                            savedStateHandle[randomNumberListTag] = tempArr
+                        }
+                        tempArr[fromPtr] = randomNumber
+                        savedStateHandle[randomNumberListTag] = tempArr
                         delay(timeMillis = selectedSettingSpeed.value.speed * 2)
+//                        savedStateHandle[randomNumberListTag] = adjustArray(j+1, i, randomNumbers.value)
+//                        delay(timeMillis = selectedSettingSpeed.value.speed * 2)
                         break;
                     }
                 }
                 if(randomNumbers.value[i-1].isGreater(randomNumbers.value[i])) {
-//                    arr = adjustArray(0, i, arr)
-//                    val fromPtr = 0
-//                    val toPtr = i
-////                        randomNumbers.value = adjustArray(j+1, i, arr)
-//                    val randomNumber: RandomNumberSorting = randomNumbers.value[toPtr]
-//                    for(i in toPtr - 1 downTo fromPtr) {
-//                        val tempVar = randomNumbers.value[i]
-//                        randomNumbers.value[i] = randomNumbers.value[i+1]
-//                        randomNumbers.value[i+1] = tempVar
-//                    }
-//                    randomNumbers.value[fromPtr] = randomNumber
-                    savedStateHandle[randomNumberListTag] = adjustArray(0, i, randomNumbers.value)
-                    delay(timeMillis = selectedSettingSpeed.value.speed * 2)
+                    var tempArr = randomNumbers.value
+                    val fromPtr = 0
+                    val toPtr = i
+                    val randomNumber: RandomNumberSorting = tempArr[toPtr]
+                    for(i in toPtr - 1 downTo fromPtr) {
+                        val tempVar = tempArr[i]
+                        tempArr[i] = tempArr[i+1]
+                        tempArr[i+1] = tempVar
+                        savedStateHandle[randomNumberListTag] = tempArr
+                        delay(timeMillis = selectedSettingSpeed.value.speed * 2)
+                    }
+                    tempArr[fromPtr] = randomNumber
+                    break;
                 }
-            }
-            randomNumbers.value[i].sorted = true
-//            savedStateHandle[randomNumberListTag] = randomNumbers.value
 
+            }
+
+            for(l in 0 .. i) {
+                if(!randomNumbers.value[l].sorted) randomNumbers.value[l].sorted = true
+            }
         }
         listSorted()
     }
