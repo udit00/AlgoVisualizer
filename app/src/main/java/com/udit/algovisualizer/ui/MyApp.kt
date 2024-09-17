@@ -2,13 +2,16 @@ package com.udit.algovisualizer.ui
 
 import android.app.Application
 import android.content.Context
+import android.content.IntentFilter
 import android.util.DisplayMetrics
 import android.util.Log
 import android.widget.Toast
+import com.udit.algovisualizer.broadcast_receivers.AirplaneModeBroadcastReceiver
 import com.udit.algovisualizer.ui.sorting.commonSortingData.RandomNumberSorting
 
 class MyApp: Application() {
 
+//    val airplaneModeBroadcastReceiver = AirplaneModeBroadcastReceiver()
 
     companion object {
         private var context: Context? = null
@@ -50,7 +53,9 @@ class MyApp: Application() {
         context = this
         displayMetrics = (context as MyApp).resources.displayMetrics
         super.onCreate()
+//        registerReceiver(airplaneModeBroadcastReceiver, IntentFilter())
     }
+
 }
 
 class ScreenDimensions {

@@ -1,5 +1,7 @@
 package com.udit.algovisualizer.ui.main_activity
 
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -9,6 +11,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.udit.algovisualizer.broadcast_receivers.AirplaneModeBroadcastReceiver
 import com.udit.algovisualizer.ui.home.HomeScreen
 import com.udit.algovisualizer.ui.main_activity.data.Screen
 import com.udit.algovisualizer.ui.main_activity.ui.theme.AlgoVisualizerTheme
@@ -21,15 +24,22 @@ import com.udit.algovisualizer.ui.sorting.sorting_options.SortingOptionsScreen
 
 class MainActivity : ComponentActivity() {
 
+    val airplaneModeBroadcastReceiver = AirplaneModeBroadcastReceiver()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        registerReceiver(airplaneModeBroadcastReceiver, IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED))
         enableEdgeToEdge()
         setContent {
             AlgoVisualizerTheme {
                 MainScreen()
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterReceiver(airplaneModeBroadcastReceiver)
     }
 }
 
