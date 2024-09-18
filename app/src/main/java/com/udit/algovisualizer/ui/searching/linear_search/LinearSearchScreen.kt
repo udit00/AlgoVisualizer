@@ -38,7 +38,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 fun LinearSearchScreen(navController: NavController, viewModel: LinearSearchViewModel = viewModel()) {
 
     val buttonName by viewModel.buttonName.collectAsState()
-    val isListSorted by viewModel.isListSorted.collectAsState()
+    val isListSearched by viewModel.isListSearched.collectAsState()
     val randomNumbers by viewModel.randomNumbers.collectAsState()
 
     Scaffold(
@@ -86,7 +86,7 @@ fun LinearSearchScreen(navController: NavController, viewModel: LinearSearchView
                     .fillMaxWidth()
                     .padding(30.dp),
                 onClick = {
-                    if(isListSorted) {
+                    if(isListSearched) {
                         viewModel.regenerateList()
                     } else {
                         viewModel.searchList(10)
@@ -117,7 +117,7 @@ private fun numList(padding: PaddingValues, viewModel: LinearSearchViewModel) {
     val firstSelectedCardColor by viewModel.firstSelectedCardColor.collectAsState()
     val secondSelectedCardColor by viewModel.secondSelectedCardColor.collectAsState()
     val sortedCardColors by viewModel.sortedCardColors.collectAsState()
-    val isListSorted by viewModel.isListSorted.collectAsState()
+    val isListSearched by viewModel.isListSearched.collectAsState()
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -141,20 +141,25 @@ private fun numList(padding: PaddingValues, viewModel: LinearSearchViewModel) {
 
                 border = BorderStroke(
                     2.dp,
-                    color = if(isListSorted) {
+                    color = if(isListSearched) {
                         sortedCardColors
                     } else {
-                        when (index) {
-                            in selectedCards -> {
-                                if (index % 2 == 0) firstSelectedCardColor
-                                else secondSelectedCardColor
-                            }
-
-                            else -> {
-                                if (randomNumber.sorted) sortedCardColors
-                                else defaultCardColor
-                            }
+                        if(index == selectedCards) {
+                            firstSelectedCardColor
+                        } else {
+                            sortedCardColors
                         }
+//                        when (index) {
+//                            in selectedCards -> {
+//                                if (index % 2 == 0) firstSelectedCardColor
+//                                else secondSelectedCardColor
+//                            }
+//
+//                            else -> {
+//                                if (randomNumber.sorted) sortedCardColors
+//                                else defaultCardColor
+//                            }
+//                        }
                     }
 //                    color = Color.Red
                 ),

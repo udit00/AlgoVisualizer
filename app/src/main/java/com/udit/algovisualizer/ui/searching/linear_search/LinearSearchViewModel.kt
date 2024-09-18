@@ -6,58 +6,56 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.udit.algovisualizer.ui.searching.commonSearchingData.RandomNumberSearching
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
 class LinearSearchViewModel(
-    val savedStateHandle: SavedStateHandle
+//    val savedStateHandle: SavedStateHandle
 ): ViewModel() {
     companion object {
         val randomNumberListTag = "randomNumberListTag"
-        val selectedCardsTag = "selectedCardsTag"
+//        val selectedCardsTag = "selectedCardsTag"
+        val selectedCardTag = "selectedCardTag"
         val buttonNameTag = "buttonNameTag"
         val defaultCardColorTag = "defaultCardColorTag"
         val firstSelectedCardColorTag = "firstSelectedCardColorTag"
         val secondSelectedCardColorTag = "secondSelectedCardColorTag"
         val sortedCardColorsTag = "sortedCardColorsTag"
 
-        private val buttonName = "Bubble Sort"
+        private val buttonName = "Linear Search"
         private val buttonNameReShuffleString = "Re-Shuffle"
-        private val isListSortedTag = "isListSortedTag"
+        private val isListSearchedTag = "isListSearchedTag"
     }
 
-    val delayTime = savedStateHandle.getStateFlow("delayTime", 10.toLong())
+    val delayTime = MutableStateFlow(10L)
 
-    val buttonName = savedStateHandle.getStateFlow(
-        buttonNameTag,
-        LinearSearchViewModel.buttonName
-    )
-    val defaultCardColor = savedStateHandle.getStateFlow(defaultCardColorTag, Color.Red)
-    val firstSelectedCardColor = savedStateHandle.getStateFlow(firstSelectedCardColorTag, Color.Yellow)
-    val secondSelectedCardColor = savedStateHandle.getStateFlow(secondSelectedCardColorTag, Color.White)
-    val sortedCardColors = savedStateHandle.getStateFlow(sortedCardColorsTag, Color.Green)
-    val selectedCards = savedStateHandle.getStateFlow(selectedCardsTag, listOf(0, 1))
-    val randomNumbers = savedStateHandle.getStateFlow(randomNumberListTag, generateRandomNumbers(10).toMutableList())
-    val isListSorted = savedStateHandle.getStateFlow(isListSortedTag, false)
+    val buttonName = MutableStateFlow(LinearSearchViewModel.buttonName)
+    val defaultCardColor = MutableStateFlow(Color.Red)
+    val firstSelectedCardColor = MutableStateFlow(Color.Yellow)
+    val secondSelectedCardColor = MutableStateFlow(Color.White)
+    val sortedCardColors = MutableStateFlow(Color.Green)
+    val selectedCards = MutableStateFlow(0)
+    val randomNumbers = MutableStateFlow(generateRandomNumbers(10).toMutableList())
+    val isListSearched = MutableStateFlow(false)
 
     fun regenerateList() {
-        savedStateHandle[isListSortedTag] = false
+        isListSearched.value = false
         val tempList = generateRandomNumbers(10).toMutableList()
-        savedStateHandle[randomNumberListTag] = tempList
-        savedStateHandle[buttonNameTag] =
-            LinearSearchViewModel.buttonName
-//        randomNumbers.value = tempList
+        randomNumbers.value = tempList
+        buttonName.value = LinearSearchViewModel.buttonName
     }
 
-    private fun listSorted() {
-        savedStateHandle[isListSortedTag] = true
-        savedStateHandle[buttonNameTag] =
-            buttonNameReShuffleString
-        var tempArr = randomNumbers.value
+    private fun listSearched() {
+        isListSearched.value = true
+        buttonName.value = buttonNameReShuffleString
+        val tempArr = randomNumbers.value
         tempArr.forEachIndexed { index, randomNumber ->
             if(!randomNumber.sorted) randomNumber.sorted = true
         }
-        savedStateHandle[randomNumberListTag] = tempArr
+        randomNumbers.value = tempArr
     }
 
     fun swapElement(arr: MutableList<RandomNumberSearching>, leftIndex: Int, rightIndex: Int): MutableList<RandomNumberSearching> {
