@@ -70,7 +70,7 @@ fun InsertionSortScreen(navController: NavController, viewModel: InsertionSortVi
 
     val buttonName by viewModel.buttonName.collectAsState()
     val isListSorted by viewModel.isListSorted.collectAsState()
-    val randomNumbers by viewModel.randomNumbers.collectAsState()
+//    val randomNumbers by viewModel.randomNumbers.collectAsState()
     val openSettings by viewModel.openSettingsFlow.collectAsState()
     val selectedView by viewModel.selectedSettingsView.collectAsState()
     val isSorting by viewModel.isSorting.collectAsState()
