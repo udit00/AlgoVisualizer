@@ -13,4 +13,15 @@ data class RandomNumberSorting(
     fun isSmaller(randomNumber: RandomNumberSorting): Boolean = num < randomNumber.num
     fun isGreaterOrEqualTo(randomNumber: RandomNumberSorting): Boolean = num >= randomNumber.num
     fun isSmallerOrEqualTo(randomNumber: RandomNumberSorting): Boolean = num <= randomNumber.num
+    override fun toString(): String {
+        return num.toString()
+    }
 }
+
+//fun RandomNumberSorting.cloneObjectWithNum(): RandomNumberSorting {
+//    return RandomNumberSorting(
+//        num = this.num,
+//        color = this.color,
+//        sorted = this.sorted
+//    )
+//}

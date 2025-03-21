@@ -99,7 +99,7 @@ class BubbleSortViewModel(
     val uiLineWidth: StateFlow<Float> = MutableStateFlow(15f)
     val generateRandomNumbersCount: MutableStateFlow<Int> = MutableStateFlow(calculateRandomNumberCount())
 
-    val randomNumbers = savedStateHandle.getStateFlow(randomNumberListTag, generateRandomNumbers(generateRandomNumbersCount.value, 100, 200).toMutableList())
+    val randomNumbers = savedStateHandle.getStateFlow(randomNumberListTag, generateRandomNumbers(generateRandomNumbersCount.value - 1, 100, 200).toMutableList())
     val isListSorted = savedStateHandle.getStateFlow(isListSortedTag, false)
     val isSorting = savedStateHandle.getStateFlow(isSortingTag, false)
 

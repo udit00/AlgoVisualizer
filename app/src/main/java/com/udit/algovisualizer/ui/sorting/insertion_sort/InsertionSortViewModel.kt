@@ -99,7 +99,7 @@ class InsertionSortViewModel(
     val generateRandomNumbersCount: MutableStateFlow<Int> = MutableStateFlow(calculateRandomNumberCount())
 
 //    val randomNumbers = savedStateHandle.getStateFlow(randomNumberListTag, generateRandomNumbers(generateRandomNumbersCount.value, 100, 200).toMutableList())
-    val randomNumbers: MutableStateFlow<MutableList<RandomNumberSorting>> = MutableStateFlow(generateRandomNumbers(generateRandomNumbersCount.value, 100, 200).toMutableList())
+    val randomNumbers: MutableStateFlow<MutableList<RandomNumberSorting>> = MutableStateFlow(generateRandomNumbers(generateRandomNumbersCount.value - 1, 100, 200).toMutableList())
     val isListSorted = savedStateHandle.getStateFlow(isListSortedTag, false)
     val isSorting = savedStateHandle.getStateFlow(isSortingTag, false)
 
@@ -205,11 +205,12 @@ class InsertionSortViewModel(
         randomNumbers.value = tempArr
     }
 
-    fun swapElement(arr: MutableList<RandomNumberSorting>, leftIndex: Int, rightIndex: Int): MutableList<RandomNumberSorting> {
-        val temp = arr[leftIndex]
-        arr[leftIndex] = arr[rightIndex]
-        arr[rightIndex] = temp
-        return arr
+    fun swapElement(arr: List<RandomNumberSorting>, leftIndex: Int, rightIndex: Int): List<RandomNumberSorting> {
+        val tempArr = arr.toMutableList() // ✅ Creates a new list
+        val temp = tempArr[leftIndex]
+        tempArr[leftIndex] = tempArr[rightIndex]
+        tempArr[rightIndex] = temp
+        return tempArr // ✅ Returns a new instance, ensuring recomposition
     }
 
 
@@ -254,45 +255,40 @@ class InsertionSortViewModel(
 //    }
 
     private suspend fun insertionSort() {
-        val tempList = swapElement(randomNumbers.value, 1, 2)
-        emitNewList(tempList)
+        savedStateHandle[isSortingTag] = true
+        var tempArr: List<RandomNumberSorting> = randomNumbers.value
+        tempArr[0].sorted = true
+        emitNewList(tempArr)
+        delay(selectedSettingSpeed.value.speed / 2)
+        for(i in 1 until tempArr.size) {
+            if(tempArr[i].isSmaller(tempArr[i-1])) {
+                emitSelectedCards(i-1, i)
+                delay(selectedSettingSpeed.value.speed / 2)
+                for(j in i downTo 1)  {
+                    emitSelectedCards(j -1, j)
+                    if(tempArr[j].isSmaller(tempArr[j-1])) {
+                        tempArr = swapElement(
+                            arr = tempArr,
+                            leftIndex = j - 1,
+                            rightIndex = j
+                        )
+                        emitNewList(tempArr)
+                        delay(selectedSettingSpeed.value.speed * 2)
+                    } else break
+                }
+            }
+            for(l in 0 .. i) {
+                if(!tempArr[l].sorted) tempArr[l].sorted = true
+            }
+            emitNewList(tempArr)
+            delay(selectedSettingSpeed.value.speed * 2)
+        }
+        listSorted()
     }
 
-//    private suspend fun insertionSort() {
-//        savedStateHandle[isSortingTag] = true
-//        var tempArr = randomNumbers.value.toMutableList()
-//        tempArr[0].sorted = true
-//        emitNewList(tempArr)
-//        delay(selectedSettingSpeed.value.speed / 2)
-//        for(i in 1 until tempArr.size) {
-//            if(tempArr[i].isSmaller(tempArr[i-1])) {
-//                emitSelectedCards(i-1, i)
-//                delay(selectedSettingSpeed.value.speed / 2)
-//                for(j in i downTo 1)  {
-//                    emitSelectedCards(j -1, j)
-//                    if(tempArr[j].isSmaller(tempArr[j-1])) {
-//                        tempArr = swapElement(
-//                            arr = tempArr,
-//                            leftIndex = j - 1,
-//                            rightIndex = j
-//                        )
-//                        emitNewList(tempArr)
-//                        delay(selectedSettingSpeed.value.speed * 2)
-//                    } else break
-//                }
-//            }
-//            for(l in 0 .. i) {
-//                if(!tempArr[l].sorted) tempArr[l].sorted = true
-//            }
-//            emitNewList(tempArr)
-//            delay(selectedSettingSpeed.value.speed * 2)
-//        }
-//        listSorted()
-//    }
-
-    private fun emitNewList(newRandomList: MutableList<RandomNumberSorting>) {
+    private fun emitNewList(newRandomList: List<RandomNumberSorting>) {
 //        savedStateHandle[randomNumberListTag] = newRandomList
-        randomNumbers.value = newRandomList
+        randomNumbers.value = newRandomList.toMutableList()
     }
 
     private fun emitSelectedCards(firstElement: Int, secondElement: Int) {
