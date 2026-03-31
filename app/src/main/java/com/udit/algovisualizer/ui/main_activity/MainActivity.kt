@@ -7,6 +7,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.compositionLocalOf
+import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -15,6 +18,7 @@ import com.udit.algovisualizer.broadcast_receivers.AirplaneModeBroadcastReceiver
 import com.udit.algovisualizer.ui.home.HomeScreen
 import com.udit.algovisualizer.ui.main_activity.data.Screen
 import com.udit.algovisualizer.ui.main_activity.ui.theme.AlgoVisualizerTheme
+import com.udit.algovisualizer.ui.searching.a_star.AStarSearchScreen
 import com.udit.algovisualizer.ui.searching.binary_search.BinarySearchScreen
 import com.udit.algovisualizer.ui.searching.linear_search.LinearSearchScreen
 import com.udit.algovisualizer.ui.sorting.bubble_sort.BubbleSortScreen
@@ -28,7 +32,10 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        registerReceiver(airplaneModeBroadcastReceiver, IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED))
+        registerReceiver(
+            airplaneModeBroadcastReceiver,
+            IntentFilter(Intent.ACTION_AIRPLANE_MODE_CHANGED)
+        )
         enableEdgeToEdge()
         setContent {
             AlgoVisualizerTheme {
@@ -43,35 +50,45 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+val LocalNavController = compositionLocalOf<NavController> {
+    error("NavController not provided")
+}
+
 @Composable
 fun MainScreen() {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = Screen.HomeScreen) {
-        composable<Screen.HomeScreen> {
+    CompositionLocalProvider(LocalNavController provides navController) {
+        NavHost(navController = navController, startDestination = Screen.AStarSearchScreen) {
+            composable<Screen.HomeScreen> {
 //            val args = it.toRoute<Screen.HomeScreen>()
-            HomeScreen(navController = navController)
-        }
-        composable<Screen.SortingOptions> {
-            SortingOptionsScreen(navController = navController)
-        }
-        composable<Screen.BubbleSortScreen> {
+                HomeScreen(navController = navController)
+            }
+            composable<Screen.SortingOptions> {
+                SortingOptionsScreen(navController = navController)
+            }
+            composable<Screen.BubbleSortScreen> {
 //            val args = it.toRoute<Screen.BubbleSortScreen>()
-            BubbleSortScreen(navController = navController)
-        }
-        composable<Screen.InsertionSortScreen> {
+                BubbleSortScreen(navController = navController)
+            }
+            composable<Screen.InsertionSortScreen> {
 //            val args = it.toRoute<Screen.BubbleSortScreen>()
-            InsertionSortScreen(navController = navController)
-        }
-        composable<Screen.SelectionSortScreen> {
+                InsertionSortScreen(navController = navController)
+            }
+            composable<Screen.SelectionSortScreen> {
 //            val args = it.toRoute<Screen.BubbleSortScreen>()
-            SelectionSortScreen(navController = navController)
-        }
-        composable<Screen.BinarySearchScreen> {
+                SelectionSortScreen(navController = navController)
+            }
+            composable<Screen.BinarySearchScreen> {
 //            val args = it.toRoute<Screen.BinarySearchScreen>()
-            BinarySearchScreen(navController = navController)
-        }
-        composable<Screen.LinearSearchScreen> {
-            LinearSearchScreen(navController = navController)
+                BinarySearchScreen(navController = navController)
+            }
+            composable<Screen.LinearSearchScreen> {
+                LinearSearchScreen(navController = navController)
+            }
+
+            composable<Screen.AStarSearchScreen> {
+                AStarSearchScreen()
+            }
         }
     }
 
