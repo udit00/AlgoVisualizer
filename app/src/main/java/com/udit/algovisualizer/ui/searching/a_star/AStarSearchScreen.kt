@@ -44,7 +44,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-val gridSize = 14
+val gridSize = 20
 @Composable
 fun AStarSearchScreen() {
     var triggerAnimation by remember { mutableStateOf(false) }
@@ -78,7 +78,7 @@ fun AStarSearchScreen() {
             for(i in 0 until gridSize * gridSize) {
 //                for(j in 0 until 20) {
                     animateCell = i
-                    delay(100)
+                    delay(50)
 //                }
             }
             triggerAnimation = false
@@ -95,9 +95,14 @@ private fun CellGrid(
     var items: List<Int> = List(nByM.first * nByM.second) { it }
     Box(
         modifier = Modifier
+            .padding(
+                start = 10.dp,
+                end = 10.dp,
+                top = 20.dp
+            )
     ) {
         LazyVerticalGrid(
-            columns = GridCells.Adaptive(20.dp),
+            columns = GridCells.Adaptive(10.dp),
             horizontalArrangement = Arrangement.Center
         ) {
 
@@ -143,7 +148,7 @@ private fun SingleCell(
 
     Box(
         modifier = Modifier
-            .padding(4.dp)
+            .padding(1.dp)
             .size(10.dp)
             .graphicsLayer {
                 scaleX = scale.value
