@@ -4,6 +4,8 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -23,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -115,6 +118,10 @@ private fun CellGrid(
             }
         }
     }
+
+    var startNode: Int by remember { mutableIntStateOf(-1) }
+    var endNode: Int by remember { mutableIntStateOf(-1) }
+
     var triggerAnimation by remember { mutableStateOf(false) }
     var animationJob by remember { mutableStateOf<Job?>(null) }
 
@@ -123,7 +130,13 @@ private fun CellGrid(
             animationJob?.cancel()
             animationJob = scope.launch(Dispatchers.Default) {
                 triggerAnimation = true
-                for (i in 0 until gridSize * gridSize) {
+//                for (i in 0 until gridSize * gridSize) {
+//                    cellStates[i] = CellState.ANIMATE
+//                    delay(100)
+//                }
+                val startIndexToLoop = if(startNode < 0) 0 else startNode
+                val endIndexToLoop = if(endNode < 0) gridSize * gridSize else endNode + 1
+                for (i in startIndexToLoop until endIndexToLoop) {
                     cellStates[i] = CellState.ANIMATE
                     delay(100)
                 }
@@ -157,7 +170,7 @@ private fun CellGrid(
 
 
 
-    var items: List<Int> = remember {
+    val items: List<Int> = remember {
         List(nByM.first * nByM.second) { it }
     }
     Box(
@@ -175,13 +188,35 @@ private fun CellGrid(
             itemsIndexed(
                 items, key = { index: Int, item: Int -> "index_${index}_item_${item}" },
             ) { index, item ->
+
+                fun processClick(index: Int) {
+                    if(startNode < 0) {
+                        startNode = index
+                    } else if(endNode < 0 && startNode < index) {
+                        endNode = index
+                    } else {
+                        startNode = index
+                    }
+                }
+
                 Box(
                     contentAlignment = Alignment.Center,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 2.dp, vertical = 2.dp)
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null,
+                            onClick = {
+                                processClick(index)
+                            }
+                        )
+                    ,
                 ) {
                     println("ANIMATION_LOG: index: $index animationCellState: ${cellStates[index]}")
                     NewCell(
                         outerCellState = cellStates[index],
+                        isSelected = startNode == index || endNode == index,
                         onAnimationCompleted = {
                             cellStates[index] = CellState.VISITED
                         }
@@ -195,12 +230,13 @@ private fun CellGrid(
 enum class CellState {
     INITIAL,
     ANIMATE,
-    VISITED
+    VISITED,
 }
 
 @Composable
 private fun NewCell(
     outerCellState: CellState,
+    isSelected: Boolean = false,
     onAnimationCompleted: () -> Unit
 ) {
     val scope = rememberCoroutineScope()
@@ -282,10 +318,9 @@ private fun NewCell(
         modifier = Modifier
             .border(
                 width = 1.dp,
-                color = Color.Gray,
+                color = if(isSelected) Color.Red else Color.Gray,
                 shape = cellShape
             )
-
             .clip(cellShape)
             .size(cellSize.dp)
 
